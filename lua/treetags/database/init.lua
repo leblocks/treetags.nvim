@@ -1,19 +1,15 @@
+local utils = require('treetags.database.utils')
 local sqlite = require('sqlite.db')
 
 local M = {}
 
 local _db = nil
 
-local function get_database_uri()
-    return vim.fs.joinpath(vim.fn.stdpath('state'),
-        M.__get_db_file_name(vim.fn.getcwd()))
-end
-
 -- TODO don't forget to normalize paths when writing to db
 ---@return sqlite_db @Main sqlite.lua object.
-M.__init_db = function()
+local init_db = function()
     return sqlite({
-        uri = get_database_uri(),
+        uri = utils.__get_database_uri(),
         files = {
             id = true,
             path = { type = 'text', unique = true },
@@ -38,7 +34,7 @@ M.__get_db = function()
         return _db
     end
 
-    _db = M.__init_db()
+    _db = init_db()
 
     -- dumb performance optimizations
     _db:execute('PRAGMA cache_size = -131072') -- 128MB cache
@@ -50,10 +46,6 @@ M.__get_db = function()
     _db:execute('PRAGMA optimize')
 
     return _db
-end
-
-M.__get_db_file_name = function(work_dir)
-    return vim.fs.normalize(work_dir):gsub('[:/\\]', '-'):gsub('^-', '') .. '.sql'
 end
 
 M.__create_indexes = function()

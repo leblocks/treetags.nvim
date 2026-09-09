@@ -11,6 +11,6 @@ vim.g.sqlite_clib_path = os.getenv('NEOVIM_SQLITE_DLL_PATH')
 require('nvim-treesitter.configs').setup({
     indent = { enable = true },
     highlight = { enable = true },
-    ensure_installed = { 'c_sharp' },
+    ensure_installed = { 'c_sharp', 'lua', 'javascript' },
     sync_install = true,
 })
