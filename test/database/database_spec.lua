@@ -1,6 +1,6 @@
 local database = require('treetags.database')
 
-describe('database', function()
+describe('treetags.database', function()
     it('__get_db returns db object', function()
         local db = database.__get_db()
         assert(db ~= nil)

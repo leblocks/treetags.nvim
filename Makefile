@@ -9,6 +9,6 @@ test:
 	nvim --headless --clean -u scripts/minimal_init.lua -c "PlenaryBustedDirectory test/ { minimal_init = 'scripts/minimal_init.lua', sequential = true }"
 
 lint:
-	luacheck lua/hopcsharp
+	luacheck lua/treetags
 	luacheck test
 
