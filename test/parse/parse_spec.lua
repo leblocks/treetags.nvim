@@ -41,4 +41,29 @@ describe('treetags.parse', function()
 
         assert(#files == lua_files_count)
     end)
+
+    it('__get_parser_name nil', function()
+        local parser_name = parse.__get_parser_name(nil)
+        assert(parser_name == nil)
+    end)
+
+    it('__get_parser_name empty', function()
+        local parser_name = parse.__get_parser_name('')
+        assert(parser_name == nil)
+    end)
+
+    it('__get_parser_name non existing extension', function()
+        local parser_name = parse.__get_parser_name('someclass.kawabanga')
+        assert(parser_name == nil)
+    end)
+
+    it('__get_parser_name parser name is different from filetype', function()
+        assert(parse.__get_parser_name('someclass.cs') == 'c_sharp')
+    end)
+
+    it('__get_parser_name parser name matches filetype', function()
+        assert(parse.__get_parser_name('script.js') == 'javascript')
+        assert(parse.__get_parser_name('script.ts') == 'typescript')
+        assert(parse.__get_parser_name('script.py') == 'python')
+    end)
 end)
