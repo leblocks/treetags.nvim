@@ -5,7 +5,6 @@ local M = {}
 
 local _db = nil
 
--- TODO don't forget to normalize paths when writing to db
 ---@return sqlite_db @Main sqlite.lua object.
 local init_db = function()
     return sqlite({
@@ -17,6 +16,7 @@ local init_db = function()
         definitions = {
             path_id = { type = 'integer', reference = 'files.id' },
             kind = 'string',
+            parser_name = 'string',
             name = 'text',
             row = 'integer',
             column = 'integer',

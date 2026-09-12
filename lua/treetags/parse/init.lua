@@ -43,7 +43,7 @@ M.__get_parser_name = function(filename)
     return filetype
 end
 
-M.__parse_tree = function(file_path, callback, writer)
+M.__parse_tree = function(file_path, callback, buffered_writer)
     local db = database.__get_db()
     local file, err = io.open(file_path, 'r')
     local normalized_path = vim.fs.normalize(file_path)
@@ -83,18 +83,34 @@ M.__parse_tree = function(file_path, callback, writer)
         end
 
         parser:for_each_tree(function(tree, _)
-            callback(tree, query, id, file_content, writer)
+            callback(tree, query, parser_name, id, file_content, buffered_writer)
         end)
     end)
 
     file:close()
 end
 
-M.__parse_file = function(file_path, writer)
-    M.__parse_tree(file_path, function(tree, path_id, file_content, wr)
+M.__parse_file = function(file_path, buffered_writer)
+    M.__parse_tree(file_path, function(tree, query, parser_name, path_id, file_content, b_wr)
         local root = tree:root()
-        -- TODO parse here definitions
-    end, writer)
+        for id, node in query:iter_captures(root, file_content, 0, -1) do
+            local capture_name = query.captures[id]
+            if capture_name:match("^local.definition") then
+                -- TODO get kind!
+                local row, col = node:range()
+                local name = vim.trim(vim.treesitter.get_node_text(node, file_content, nil))
+                b_wr:add_to_buffer('definitions', {
+                    path_id = path_id,
+                    kind = 'TODO',
+                    name = name,
+                    parser_name = parser_name,
+                    row = row + 1,
+                    column = col + 1,
+                    line_content = 'TODO',
+                })
+            end
+        end
+    end, buffered_writer)
 end
 
 return M
