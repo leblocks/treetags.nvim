@@ -54,7 +54,7 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
         return
     end
 
-    local _, id = db:insert('files', { path = normalized_path, extension = extension })
+    local _, id = db:insert('files', { path = normalized_path })
 
     local file_content = file:read('*a')
     local parser_name = M.__get_parser_name(file_path)
@@ -101,7 +101,7 @@ M.__parse_file = function(file_path, buffered_writer)
                 local name = vim.trim(vim.treesitter.get_node_text(node, file_content, nil))
                 b_wr:add_to_buffer('definitions', {
                     path_id = path_id,
-                    kind = 'TODO',
+                    kind = capture_name, -- TODO use numeric instead? to preserve space?
                     name = name,
                     parser_name = parser_name,
                     row = row + 1,

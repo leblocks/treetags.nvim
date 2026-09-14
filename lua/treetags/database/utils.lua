@@ -6,7 +6,7 @@ M.__get_database_uri = function()
 end
 
 M.__get_db_file_name = function(work_dir)
-    return vim.fs.normalize(work_dir):gsub('[:/\\]', '-'):gsub('^-', '') .. '.sql'
+    return vim.fs.normalize(work_dir):gsub('[:/\\]', '-'):gsub('^-', '') .. '.treetags.sql'
 end
 
 return M
