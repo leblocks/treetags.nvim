@@ -47,7 +47,6 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     local db = database.__get_db()
     local file, err = io.open(file_path, 'r')
     local normalized_path = vim.fs.normalize(file_path)
-    local extension = vim.fs.ext(normalized_path, {})
 
     if not file then
         print('error opening ' .. file_path .. ' error: ' .. err)
@@ -61,6 +60,7 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
 
     if not parser_name then
         print('error finding parser name for ' .. file_path)
+        file:close()
         return
     end
 
@@ -68,6 +68,7 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
 
     if not parser then
         print('error finding parser for ' .. file_path .. ' name ' .. parser_name)
+        file:close()
         return
     end
 
@@ -90,23 +91,33 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     file:close()
 end
 
-M.__parse_file = function(file_path, buffered_writer)
+M.__parse_file = function(file_path, filtered_kinds, buffered_writer)
+    local should_skip_kinds_check = filtered_kinds == nil or #filtered_kinds == 0
+
     M.__parse_tree(file_path, function(tree, query, parser_name, path_id, file_content, b_wr)
         local root = tree:root()
         for id, node in query:iter_captures(root, file_content, 0, -1) do
             local capture_name = query.captures[id]
             if capture_name:match("^local.definition") then
-                -- TODO get kind!
+                local kind = string.gsub(capture_name, 'local.definition.', '')
+
+                if not should_skip_kinds_check then
+                    for _, filtered in ipairs(filtered_kinds) do
+                        if kind == filtered then
+                            return
+                        end
+                    end
+                end
+
                 local row, col = node:range()
                 local name = vim.trim(vim.treesitter.get_node_text(node, file_content, nil))
                 b_wr:add_to_buffer('definitions', {
                     path_id = path_id,
-                    kind = capture_name, -- TODO use numeric instead? to preserve space?
+                    kind = kind,
                     name = name,
                     parser_name = parser_name,
                     row = row + 1,
                     column = col + 1,
-                    line_content = 'TODO',
                 })
             end
         end

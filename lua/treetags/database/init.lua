@@ -20,7 +20,6 @@ local init_db = function()
             name = 'text',
             row = 'integer',
             column = 'integer',
-            line_content = 'string',
         },
         opts = {
             keep_open = true,
