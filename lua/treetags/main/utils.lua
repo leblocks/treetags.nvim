@@ -1,4 +1,3 @@
--- TODO move tests
 local M = {}
 
 M.__block_on_processing = function(callback)
@@ -18,7 +17,6 @@ M.__log = function(message, prefix)
     print(M.__escape_ansi(prefix .. message))
 end
 
--- TODO move tests
 ---@param entries table to iterate on
 ---@param callback function will be called on each entry in entries via vim.schedule
 M.__scheduled_iteration = function(entries, callback)

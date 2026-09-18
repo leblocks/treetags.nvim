@@ -7,8 +7,6 @@
 
 local M = {}
 
-vim.g.treetags_processing = false
-
 ---@param params TreetagsDatabaseInitParams object
 M.init_database = function(params)
 end

@@ -64,6 +64,12 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
         return
     end
 
+    if not vim.treesitter.language.add(parser_name) then
+        print('error loading parser for ' .. parser_name)
+        file:close()
+        return
+    end
+
     local parser = vim.treesitter.get_string_parser(file_content, parser_name, { error = false })
 
     if not parser then
@@ -104,7 +110,7 @@ M.__parse_file = function(file_path, filtered_kinds, buffered_writer)
                 if not should_skip_kinds_check then
                     for _, filtered in ipairs(filtered_kinds) do
                         if kind == filtered then
-                            return
+                            goto continue
                         end
                     end
                 end
@@ -120,6 +126,7 @@ M.__parse_file = function(file_path, filtered_kinds, buffered_writer)
                     column = col + 1,
                 })
             end
+            ::continue::
         end
     end, buffered_writer)
 end

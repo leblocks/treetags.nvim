@@ -1,6 +1,6 @@
 ---@class TreetagsDatabaseInitParams object
 ---@field extensions string[] List of file extensions to parse, if empty try to parse everything
----@field kinds_filter string[] List of kinds to not store in database, if empty store every kind
+---@field kinds_filter string[] List of kinds to not store in database, if empty store every kind, defaults to { 'var' }
 ---@field buffer_size number Number of entries to buffer before flushing to the database during init
 
 local parse = require('treetags.parse')
@@ -10,11 +10,14 @@ local BufferedWriter = require('treetags.database.buffer')
 
 local M = {}
 
+vim.g.treetags_processing = false
+
 ---@param params TreetagsDatabaseInitParams object
 M.__init_database = function(params)
-    -- TODO validate default values
+    vim.g.treetags_processing = true
+    params = params or {}
     local extensions = params.extensions or {}
-    local kinds_filter = params.kinds_filter or {}
+    local kinds_filter = params.kinds_filter or { 'var' }
     local buffer_size = params.buffer_size or 1000
 
     local counter = 0
@@ -33,6 +36,7 @@ M.__init_database = function(params)
             writer:flush()
             utils.__log('creating indexes', '')
             database.__create_indexes()
+            vim.g.treetags_processing = false
         end
     end)
 end
