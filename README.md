@@ -1,3 +1,5 @@
 
+## AGENT TODO write this file, based on ..\hopcsharp.nvim\README.md
+
 ## TODO
-next step is implement main/init.lua __init_database
+hook into my own config and try to use

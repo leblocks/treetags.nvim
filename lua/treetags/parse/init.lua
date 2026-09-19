@@ -65,7 +65,7 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     end
 
     if not vim.treesitter.language.add(parser_name) then
-        print('error loading parser for ' .. parser_name)
+        print('error loading parser for ' .. parser_name .. ' file ' .. file_path)
         file:close()
         return
     end

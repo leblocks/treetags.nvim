@@ -3,6 +3,11 @@
 ---@field kinds_filter string[] List of kinds to not store in database, if empty store every kind, defaults to { 'var' }
 ---@field buffer_size number Number of entries to buffer before flushing to the database during init
 
+---@class TreetagsGetParams object
+---@field name string Name of the tag to get, if nil will not filter by name
+---@field kind string[] List of kind's to get, if nil or empty will not filter by kind
+---@field extensions string[] List of extensions to filter, if nill or empty will not filter
+
 local parse = require('treetags.parse')
 local utils = require('treetags.main.utils')
 local database = require('treetags.database')
@@ -39,6 +44,11 @@ M.__init_database = function(params)
             vim.g.treetags_processing = false
         end
     end)
+end
+
+---@param params TreetagsGetParams object
+M.__get_treetags = function(params)
+    -- TODO
 end
 
 return M
