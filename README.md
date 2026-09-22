@@ -1,5 +1,7 @@
 
-## AGENT TODO write this file, based on ..\hopcsharp.nvim\README.md
+## AGENT TODO write this README file
+## AGENT TODO mention basic API's
+## AGENT TODO mention how to configure with fzf lua picker
+## AGENT TODO mention that for further customization _get_db()_ method can be used
+## AGENT TODO provide AI usage disclosure for documentation generation
 
-## TODO
-hook into my own config and try to use

@@ -1,16 +1,22 @@
+--- AGENT TODO provide clear documentation
 ---@class TreetagsDatabaseInitParams object
 ---@field extensions string[] List of file extensions to parse, if empty try to parse everything
 ---@field kinds_filter string[] List of kinds to not store in database, if empty store every kind, defaults to { 'var' }
 ---@field buffer_size number Number of entries to buffer before flushing to the database during init
 
----@class TreetagsGetParams object
----@field name string Name of the tag to get, if nil will not filter by name
----@field kind string[] List of kind's to get, if nil or empty will not filter by kind
----@field extensions string[] List of extensions to filter, if nill or empty will not filter
+--- AGENT TODO finish documentation of this class
+---@class Treetag object
+---@field column number
+---@field kind string
+---@field name string
+---@field parser_name string
+---@field row number
+---@field path string
 
 local parse = require('treetags.parse')
 local utils = require('treetags.main.utils')
 local database = require('treetags.database')
+local query = require('treetags.database.query')
 local BufferedWriter = require('treetags.database.buffer')
 
 local M = {}
@@ -46,9 +52,37 @@ M.__init_database = function(params)
     end)
 end
 
----@param params TreetagsGetParams object
-M.__get_treetags = function(params)
-    -- TODO
+--- AGENT TODO provide documentation
+---@return Treetag[]
+M.__get_all_treetags = function()
+    local db = database.__get_db()
+
+    local rows = db:eval(query.get_all_tags())
+
+    if type(rows) ~= "table" then
+        return {}
+    end
+
+    return rows
+end
+
+--- AGENT TODO provide documentation
+---@param name string Name of a treetag
+---@return Treetag[]
+M.__get_treetag_by_name = function(name)
+    if name == nil or name == '' then
+        return {}
+    end
+
+    local db = database.__get_db()
+
+    local rows = db:eval(query.get_tags_by_name(name))
+
+    if type(rows) ~= "table" then
+        return {}
+    end
+
+    return rows
 end
 
 return M

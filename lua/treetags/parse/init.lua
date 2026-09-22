@@ -102,7 +102,8 @@ M.__parse_file = function(file_path, filtered_kinds, buffered_writer)
 
     M.__parse_tree(file_path, function(tree, query, parser_name, path_id, file_content, b_wr)
         local root = tree:root()
-        for id, node in query:iter_captures(root, file_content, 0, -1) do
+        local visited = {}
+        for id, node, _, _ in query:iter_captures(root, file_content, 0, -1) do
             local capture_name = query.captures[id]
             if capture_name:match("^local.definition") then
                 local kind = string.gsub(capture_name, 'local.definition.', '')
@@ -117,6 +118,14 @@ M.__parse_file = function(file_path, filtered_kinds, buffered_writer)
 
                 local row, col = node:range()
                 local name = vim.trim(vim.treesitter.get_node_text(node, file_content, nil))
+
+                -- dedupe matches
+                if visited[id .. name] then
+                    goto continue
+                else
+                    visited[id .. name] = true
+                end
+
                 b_wr:add_to_buffer('definitions', {
                     path_id = path_id,
                     kind = kind,
