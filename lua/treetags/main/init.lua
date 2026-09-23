@@ -26,6 +26,7 @@ vim.g.treetags_processing = false
 ---@param params TreetagsDatabaseInitParams object
 M.__init_database = function(params)
     vim.g.treetags_processing = true
+    database.__drop_db()
     params = params or {}
     local extensions = params.extensions or {}
     local kinds_filter = params.kinds_filter or { 'var' }
