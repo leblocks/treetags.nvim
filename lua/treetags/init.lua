@@ -12,26 +12,26 @@ M.init_database = function(params)
     end)
 end
 
--- TODO tests
 --- AGENT TODO provide documentation
+---@return Treetag[]
 M.get_all_treetags = function()
-    utils.__block_on_processing(function()
+    return utils.__block_on_processing(function()
         return main.__get_all_treetags()
     end)
 end
 
--- TODO tests
 --- AGENT TODO provide documentation
+---@return Treetag[]
 M.get_treetag_by_name = function(name)
-    utils.__block_on_processing(function()
+    return utils.__block_on_processing(function()
         return main.__get_treetag_by_name(name)
     end)
 end
 
--- TODO tests
 --- AGENT TODO provide documentation
+---@return sqlite_db
 M.get_db = function()
-    utils.__block_on_processing(function()
+    return utils.__block_on_processing(function()
         return database.__get_db()
     end)
 end
