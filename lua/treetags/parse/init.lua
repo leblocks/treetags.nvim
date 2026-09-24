@@ -1,7 +1,5 @@
 local database = require('treetags.database')
-
--- TODO provide logging framework
-local DEBUG = false
+local utils = require('treetags.main.utils')
 
 local M = {}
 
@@ -52,7 +50,7 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     local normalized_path = vim.fs.normalize(file_path)
 
     if not file then
-        if DEBUG then print('error opening ' .. file_path .. ' error: ' .. err) end
+        utils.__log('error opening ' .. file_path .. ' error: ' .. err)
         return
     end
 
@@ -62,13 +60,13 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     local parser_name = M.__get_parser_name(file_path)
 
     if not parser_name then
-        if DEBUG then print('error finding parser name for ' .. file_path) end
+        utils.__log('error finding parser name for ' .. file_path)
         file:close()
         return
     end
 
     if not vim.treesitter.language.add(parser_name) then
-        if DEBUG then print('error loading parser for ' .. parser_name .. ' file ' .. file_path) end
+        utils.__log('error loading parser for ' .. parser_name .. ' file ' .. file_path)
         file:close()
         return
     end
@@ -76,7 +74,7 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     local parser = vim.treesitter.get_string_parser(file_content, parser_name, { error = false })
 
     if not parser then
-        if DEBUG then print('error finding parser for ' .. file_path .. ' name ' .. parser_name) end
+        utils.__log('error finding parser for ' .. file_path .. ' name ' .. parser_name)
         file:close()
         return
     end

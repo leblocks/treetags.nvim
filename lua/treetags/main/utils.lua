@@ -12,7 +12,6 @@ M.__block_on_processing = function(callback)
     return callback()
 end
 
--- TODO pass here debug level, default to info
 M.__log = function(message, prefix)
     prefix = prefix or 'treetags: '
     vim.notify(M.__escape_ansi(prefix .. message), vim.log.levels.INFO)
