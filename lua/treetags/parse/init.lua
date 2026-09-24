@@ -82,6 +82,8 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     local query = vim.treesitter.query.get(parser_name, 'locals')
 
     if not query then
+        utils.__log('error finding query for ' .. file_path .. ' name ' .. parser_name)
+        file:close()
         return
     end
 
