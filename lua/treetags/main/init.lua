@@ -32,6 +32,7 @@ M.__init_database = function(params)
     local kinds_filter = params.kinds_filter or { 'var' }
     local buffer_size = params.buffer_size or 1000
 
+    local start = os.time()
     local counter = 0
     local writer = BufferedWriter:new(database.__get_db(), buffer_size)
     local files = parse.__get_source_files(extensions)
@@ -48,6 +49,8 @@ M.__init_database = function(params)
             writer:flush()
             utils.__log('creating indexes', '')
             database.__create_indexes()
+            local elapsed = os.difftime(os.time(), start)
+            utils.__log('finished processing files ' .. elapsed .. 's elapsed')
             vim.g.treetags_processing = false
         end
     end)
