@@ -33,6 +33,7 @@ M.__get_parser_name = function(filename)
 
     local map = {
         cs = 'c_sharp',
+        ps1 = 'powershell',
     }
 
     local filetype = vim.filetype.match({ filename = filename })
@@ -110,6 +111,10 @@ M.__parse_file = function(file_path, filtered_kinds, buffered_writer)
             local capture_name = query.captures[id]
             if capture_name:match("^local.definition") then
                 local kind = string.gsub(capture_name, 'local.definition.', '')
+
+                if kind == 'local.definition' then
+                    kind = 'definition'
+                end
 
                 if not should_skip_kinds_check then
                     for _, filtered in ipairs(filtered_kinds) do
