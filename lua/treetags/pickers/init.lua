@@ -7,7 +7,7 @@ M.fzf = function()
     local pickers = require('treetags.pickers.fzf')
     return {
         get_all_treetags = pickers.get_all_treetags,
-        get_treetag_by_name = pickers.get_treetags_by_name,
+        get_treetag_by_word_under_cursor = pickers.get_treetag_by_word_under_cursor,
     }
 end
 

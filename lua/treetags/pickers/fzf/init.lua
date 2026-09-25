@@ -1,3 +1,4 @@
+-- TODO refactor
 local ok, _ = pcall(require, 'fzf-lua')
 if not ok then
     error("treetags.pickers.fzf was required but 'fzf-lua' plugin was not found")
@@ -5,7 +6,10 @@ end
 
 local M = {}
 
--- TODO refactor
+local function format_entry(i, entry)
+    return string.format('%-10s %-50s %-30s [%s]', '[' .. entry.kind .. ']', entry.name, vim.fs.basename(entry.path), i)
+end
+
 local function parse_entry(entry, items)
     local id = nil
 
@@ -64,28 +68,36 @@ local get_picker = function(items_provider, formatter)
             end)()
         end, {
             actions = {
-                -- on select hop to definition by path row and column
                 ['default'] = function(selected)
                     local path, row, column = parse_entry(selected[1], items)
-                    actions.file_edit({ path .. ':' .. row .. ':' .. column }, {})
+                    actions.file_switch_or_edit({ path .. ':' .. row .. ':' .. column }, {})
                 end,
-                --                 ['ctrl-v'] = function(selected)
-                --                     local path, row, column = parse_entry(selected[1], items)
-                --                     -- TODO
-                --                 end,
 
-                --                 ['ctrl-s'] = function(selected)
-                --                     -- local path, row, column = parse_entry(selected[1], items)
-                --                     -- TODO
-                --                 end,
+                ['ctrl-v'] = function(selected)
+                    local path, row, column = parse_entry(selected[1], items)
+                    actions.file_vsplit({ path .. ':' .. row .. ':' .. column }, {})
+                end,
 
-                --                 ['ctrl-t'] = function(selected)
-                --                     -- TODO
-                --                 end,
+                ['ctrl-s'] = function(selected)
+                    local path, row, column = parse_entry(selected[1], items)
+                    actions.file_split({ path .. ':' .. row .. ':' .. column }, {})
+                end,
 
-                --                 ['alt-q'] = function(selected)
-                --                     -- TODO
-                --                 end,
+                ['ctrl-t'] = function(selected)
+                    local path, row, column = parse_entry(selected[1], items)
+                    actions.file_tabedit({ path .. ':' .. row .. ':' .. column }, {})
+                end,
+
+                ['alt-q'] = function(selected)
+                    local qf = {}
+
+                    for _, s in ipairs(selected) do
+                        local path, row, column = parse_entry(s, items)
+                        table.insert(qf, path .. ':' .. row .. ':' .. column)
+                    end
+                    -- TODO terrible hack is here
+                    actions.file_sel_to_qf(qf, { __resume_key = 't' })
+                end,
             },
 
             previewer = custom_previewer,
@@ -99,16 +111,11 @@ local get_picker = function(items_provider, formatter)
     return picker
 end
 
-M.get_all_treetags = get_picker(require('treetags').get_all_treetags, function(i, entry)
-    return string.format('%-50s %-30s %-30s [%s]', entry.name, entry.kind, vim.fs.basename(entry.path), i)
-end)
+M.get_all_treetags = get_picker(require('treetags').get_all_treetags, format_entry)
 
-M.get_treetags_by_name = function(name)
-    local formatter = function(i, entry)
-        return string.format('%-50s %-30s %-30s [%s]', entry.name, entry.kind, vim.fs.basename(entry.path), i)
-    end
-
-    local picker = get_picker(function() return require('treetags').get_treetag_by_name(name) end, formatter)
+M.get_treetag_by_word_under_cursor = function()
+    local current_word = vim.fn.expand('<cword>')
+    local picker = get_picker(function() return require('treetags').get_treetag_by_name(current_word) end, format_entry)
     picker()
 end
 
