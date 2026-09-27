@@ -4,10 +4,8 @@ if not ok then
     error("treetags.pickers.fzf was required but 'fzf-lua' plugin was not found")
 end
 
-local M = {}
-
 local function format_entry(i, entry)
-    return string.format('%-10s %-50s %-30s [%s]', '[' .. entry.kind .. ']', entry.name, vim.fs.basename(entry.path), i)
+    return string.format('%-15s %-50s %-30s [%s]', '[' .. entry.kind .. ']', entry.name, vim.fs.basename(entry.path), i)
 end
 
 local function parse_entry(entry, items)
@@ -48,7 +46,6 @@ local get_picker = function(items_provider, formatter)
     end
 
     local picker = function()
-        -- get database (connection is always opened)
         fzf.fzf_exec(function(fzf_cb)
             coroutine.wrap(function()
                 local co = coroutine.running()
@@ -101,22 +98,29 @@ local get_picker = function(items_provider, formatter)
             },
 
             previewer = custom_previewer,
-
             fzf_opts = {
                 ['--wrap'] = false,
                 ['--multi'] = true,
             },
         })
     end
+
     return picker
 end
 
-M.get_all_treetags = get_picker(require('treetags').get_all_treetags, format_entry)
-
-M.get_treetag_by_word_under_cursor = function()
-    local current_word = vim.fn.expand('<cword>')
-    local picker = get_picker(function() return require('treetags').get_treetag_by_name(current_word) end, format_entry)
-    picker()
-end
-
-return M
+return {
+    treetags_all = get_picker(require('treetags').get_all_treetags, format_entry),
+    treetags_cword = function()
+        local current_word = vim.fn.expand('<cword>')
+        local picker = get_picker(function() return require('treetags').get_treetag_by_name(current_word) end,
+            format_entry)
+        picker()
+    end,
+    treetags_cWORD = function()
+        local current_word = vim.fn.expand('<cWORD>')
+        local picker = get_picker(function() return require('treetags').get_treetag_by_name(current_word) end,
+            format_entry)
+        picker()
+    end,
+    treetags_live = function() end,
+}

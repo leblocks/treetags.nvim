@@ -36,4 +36,25 @@ M.get_db = function()
     end)
 end
 
+--- AGENT TODO finish documentation of this class
+---@class TreetagPickers object
+---@field treetags_all function
+---@field treetags_cword function
+---@field treetags_cWORD function
+---@field treetags_live function
+
+--- AGENT TODO provide documentation
+---@param picker_type string Possible values fzf, telescope
+---@return TreetagPickers
+M.get_pickers = function(picker_type)
+    if picker_type == 'fzf' then
+        return require('treetags.pickers.fzf')
+    elseif picker_type == 'telescope' then
+        -- TODO
+        return require('treetags.pickers.telescope')
+    else
+        error('AGENT TODO error message')
+    end
+end
+
 return M
