@@ -49,12 +49,12 @@ end
 
 M.__create_indexes = function()
     local db = M.__get_db()
-    -- TODO indexes!
+    db:eval('CREATE INDEX IF NOT EXISTS idx_definitions_name_kind ON definitions(name, kind);')
 end
 
 M.__drop_db = function()
     local db = M.__get_db()
-    -- TODO drop indexes
+    db:eval('DROP INDEX IF EXISTS idx_definitions_name_kind;')
     db:eval('delete from definitions')
     db:eval('delete from files')
     db:eval('vacuum')
