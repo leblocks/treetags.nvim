@@ -29,7 +29,7 @@ M.__init_database = function(params)
     database.__drop_db()
     params = params or {}
     local extensions = params.extensions or {}
-    local kinds_filter = params.kinds_filter or { 'var' }
+    local kinds_filter = params.kinds_filter or { 'var', 'parameter' }
     local buffer_size = params.buffer_size or 1000
 
     local start = os.time()
