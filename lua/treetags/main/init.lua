@@ -89,4 +89,25 @@ M.__get_treetag_by_name = function(name)
     return rows
 end
 
+--- TODO better name for this method?
+--- AGENT TODO provide documentation
+---@param name string Name of a treetag
+---@return Treetag[]
+M.__get_treetag_by_name_glob = function(name)
+    if name == nil or name == '' then
+        return {}
+    end
+
+    local db = database.__get_db()
+
+    local rows = db:eval(query.get_tags_by_name_glob(name))
+
+    if type(rows) ~= "table" then
+        return {}
+    end
+
+    return rows
+end
+
+
 return M

@@ -127,7 +127,6 @@ describe('treetags', function()
 
     it('get_treetag_by_name - happy path', function()
         database.__drop_db()
-        local tags = require('treetags').get_treetag_by_name('')
         require('treetags').init_database()
         vim.wait(5000, function()
             return not vim.g.treetags_processing
