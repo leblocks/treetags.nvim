@@ -49,8 +49,8 @@ end
 
 -- Insert a new element with a given priority
 function PriorityQueue:push(value, priority)
-    if type(priority) ~= "number" then
-        error("Priority must be a number", 2)
+    if type(priority) ~= 'number' then
+        error('Priority must be a number', 2)
     end
     table.insert(self.heap, { value = value, priority = priority })
     heapify_up(self.heap, #self.heap)
@@ -58,13 +58,17 @@ end
 
 -- Peek at the element with the highest priority (lowest priority number)
 function PriorityQueue:peek()
-    if #self.heap == 0 then return nil end
+    if #self.heap == 0 then
+        return nil
+    end
     return self.heap[1].value, self.heap[1].priority
 end
 
 -- Remove and return the element with the highest priority
 function PriorityQueue:pop()
-    if #self.heap == 0 then return nil end
+    if #self.heap == 0 then
+        return nil
+    end
     local root = self.heap[1]
     self.heap[1] = self.heap[#self.heap]
     table.remove(self.heap)
@@ -99,13 +103,13 @@ end
 
 -- Example usage
 local pq = PriorityQueue:new()
-pq:push("Task A", 3)
-pq:push("Task B", 1)
-pq:push("Task C", 2)
+pq:push('Task A', 3)
+pq:push('Task B', 1)
+pq:push('Task C', 2)
 
-print("Peek:", pq:peek()) -- Task B, priority 1
+print('Peek:', pq:peek()) -- Task B, priority 1
 
 while not pq:is_empty() do
     local value, priority = pq:pop()
-    print("Popped:", value, "Priority:", priority)
+    print('Popped:', value, 'Priority:', priority)
 end

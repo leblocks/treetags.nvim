@@ -19,7 +19,7 @@ describe('treetags.database.query', function()
 
     it('can query get_tags_by_name - happy path', function()
         local db = database.__get_db()
-       db:eval(query.get_tags_by_name('happy path'))
+        db:eval(query.get_tags_by_name('happy path'))
     end)
 
     it('can query get_tags_by_name_glob - nil', function()
@@ -34,6 +34,6 @@ describe('treetags.database.query', function()
 
     it('can query get_tags_by_name_glob - happy path', function()
         local db = database.__get_db()
-       db:eval(query.get_tags_by_name_glob('happy path'))
+        db:eval(query.get_tags_by_name_glob('happy path'))
     end)
 end)

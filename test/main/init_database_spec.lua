@@ -41,7 +41,7 @@ describe('treetags.main', function()
         local db = database.__get_db()
 
         local rows = db:eval([[ SELECT COUNT(1) FROM definitions WHERE kind = 'var' ]])
-        assert(rows[1]["COUNT(1)"] == 0)
+        assert(rows[1]['COUNT(1)'] == 0)
     end)
 
     it('__init_database - kinds_filter works', function()
@@ -54,10 +54,10 @@ describe('treetags.main', function()
         local db = database.__get_db()
 
         local rows = db:eval([[ SELECT COUNT(1) FROM definitions WHERE kind = 'function' ]])
-        assert(rows[1]["COUNT(1)"] == 0)
+        assert(rows[1]['COUNT(1)'] == 0)
 
         rows = db:eval([[ SELECT COUNT(1) FROM definitions WHERE kind = 'var' ]])
-        assert(rows[1]["COUNT(1)"] == 0)
+        assert(rows[1]['COUNT(1)'] == 0)
     end)
 
     it('__init_database - populates database', function()
@@ -70,18 +70,18 @@ describe('treetags.main', function()
         local db = database.__get_db()
 
         local rows = db:eval([[ SELECT COUNT(1) FROM definitions WHERE kind IS NULL ]])
-        assert(rows[1]["COUNT(1)"] == 0)
+        assert(rows[1]['COUNT(1)'] == 0)
 
         rows = db:eval([[ SELECT COUNT(1) FROM definitions WHERE parser_name IS NULL ]])
-        assert(rows[1]["COUNT(1)"] == 0)
+        assert(rows[1]['COUNT(1)'] == 0)
 
         rows = db:eval([[ SELECT COUNT(1) FROM definitions WHERE name IS NULL ]])
-        assert(rows[1]["COUNT(1)"] == 0)
+        assert(rows[1]['COUNT(1)'] == 0)
 
         rows = db:eval([[ SELECT COUNT(1) FROM definitions WHERE row IS NULL ]])
-        assert(rows[1]["COUNT(1)"] == 0)
+        assert(rows[1]['COUNT(1)'] == 0)
 
         rows = db:eval([[ SELECT COUNT(1) FROM definitions WHERE column IS NULL ]])
-        assert(rows[1]["COUNT(1)"] == 0)
+        assert(rows[1]['COUNT(1)'] == 0)
     end)
 end)

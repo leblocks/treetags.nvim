@@ -63,7 +63,7 @@ M.__get_all_treetags = function()
 
     local rows = db:eval(query.get_all_tags())
 
-    if type(rows) ~= "table" then
+    if type(rows) ~= 'table' then
         return {}
     end
 
@@ -82,7 +82,7 @@ M.__get_treetag_by_name = function(name)
 
     local rows = db:eval(query.get_tags_by_name(name))
 
-    if type(rows) ~= "table" then
+    if type(rows) ~= 'table' then
         return {}
     end
 
@@ -102,12 +102,11 @@ M.__get_treetag_by_name_glob = function(name)
 
     local rows = db:eval(query.get_tags_by_name_glob(name))
 
-    if type(rows) ~= "table" then
+    if type(rows) ~= 'table' then
         return {}
     end
 
     return rows
 end
-
 
 return M

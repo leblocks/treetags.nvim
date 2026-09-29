@@ -1,4 +1,3 @@
-
 local M = {}
 
 M.__get_database_uri = function()
@@ -10,4 +9,3 @@ M.__get_db_file_name = function(work_dir)
 end
 
 return M
-

@@ -4,7 +4,7 @@ local utils = require('treetags.main.utils')
 local M = {}
 
 M.__get_source_files = function(extensions)
-    local command = { 'fd', '--type', 'file', }
+    local command = { 'fd', '--type', 'file' }
 
     if extensions ~= nil and #extensions > 0 then
         for _, ext in ipairs(extensions) do
@@ -109,7 +109,7 @@ M.__parse_file = function(file_path, filtered_kinds, buffered_writer)
         local visited = {}
         for id, node, _, _ in query:iter_captures(root, file_content, 0, -1) do
             local capture_name = query.captures[id]
-            if capture_name:match("^local.definition") then
+            if capture_name:match('^local.definition') then
                 local kind = string.gsub(capture_name, 'local.definition.', '')
 
                 if kind == 'local.definition' then

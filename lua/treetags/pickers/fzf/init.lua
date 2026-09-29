@@ -112,14 +112,16 @@ return {
     treetags_all = get_picker(require('treetags').get_all_treetags, format_entry),
     treetags_cword = function()
         local current_word = vim.fn.expand('<cword>')
-        local picker = get_picker(function() return require('treetags').get_treetag_by_name(current_word) end,
-            format_entry)
+        local picker = get_picker(function()
+            return require('treetags').get_treetag_by_name(current_word)
+        end, format_entry)
         picker()
     end,
     treetags_cWORD = function()
         local current_word = vim.fn.expand('<cWORD>')
-        local picker = get_picker(function() return require('treetags').get_treetag_by_name(current_word) end,
-            format_entry)
+        local picker = get_picker(function()
+            return require('treetags').get_treetag_by_name(current_word)
+        end, format_entry)
         picker()
     end,
     treetags_live = function() end,

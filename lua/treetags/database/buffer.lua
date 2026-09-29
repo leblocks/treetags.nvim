@@ -4,7 +4,6 @@
 ---@field flush function
 ---@field new function
 
-
 local BufferedWriter = {}
 BufferedWriter.__index = BufferedWriter
 

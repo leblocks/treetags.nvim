@@ -19,7 +19,7 @@ describe('treetags.parse', function()
             assert(row.parser_name ~= nil)
             assert(row.path_id ~= nil)
             assert(row.kind ~= nil)
-            assert(not row.kind:match("^local.definition"))
+            assert(not row.kind:match('^local.definition'))
         end
     end)
 
@@ -39,7 +39,7 @@ describe('treetags.parse', function()
             assert(row.parser_name ~= nil)
             assert(row.path_id ~= nil)
             assert(row.kind ~= nil)
-            assert(not row.kind:match("^local.definition"))
+            assert(not row.kind:match('^local.definition'))
         end
     end)
 
