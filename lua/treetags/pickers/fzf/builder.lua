@@ -2,9 +2,10 @@
 ---@field with_items_provider function
 ---@field with_formatter function
 ---@field with_entry_parser function
+---@field with_exec_empty_query function
+---@field with_prompt function
 ---@field build function
 ---@field new function
-
 
 local FzfLuaPickerBuilder = {}
 
@@ -16,6 +17,12 @@ function FzfLuaPickerBuilder:new()
         items_provider = nil,
         formatter = nil,
         parser = nil,
+        prompt = '',
+        exec_empty_query = false,
+        fzf_opts = {
+            ['--wrap'] = false,
+            ['--multi'] = true,
+        },
     }
 
     self.__index = self
@@ -42,6 +49,13 @@ end
 ---@return FzfLuaPickerBuilder
 function FzfLuaPickerBuilder:with_entry_parser(parser)
     self.parser = parser
+    return self
+end
+
+-- AGENT TODO finish description
+---@return FzfLuaPickerBuilder
+function FzfLuaPickerBuilder:with_prompt(prompt)
+    self.prompt = prompt
     return self
 end
 
@@ -126,10 +140,38 @@ function FzfLuaPickerBuilder:build()
         end, {
             actions = self:get_actions(),
             previewer = self:get_previewer(),
-            fzf_opts = {
-                ['--wrap'] = false,
-                ['--multi'] = true,
-            },
+            fzf_opts = self.fzf_opts,
+            prompt = self.prompt,
+        })
+    end
+end
+
+function FzfLuaPickerBuilder:build_live()
+    local fzf = require('fzf-lua')
+    return function()
+        fzf.fzf_live(function(args)
+            return coroutine.wrap(function(fzf_cb)
+                local co = coroutine.running()
+                self.items = self.items_provider(args[1])
+
+                if self.items == nil or type(self.items) ~= 'table' then
+                    self.items = {}
+                end
+
+                for i, entry in ipairs(self.items) do
+                    fzf_cb(self.formatter(i, entry), function()
+                        coroutine.resume(co)
+                    end)
+                    coroutine.yield()
+                end
+                fzf_cb()
+            end)
+        end, {
+            actions = self:get_actions(),
+            previewer = self:get_previewer(),
+            fzf_opts = self.fzf_opts,
+            prompt = self.prompt,
+            exec_empty_query = self.exec_empty_query,
         })
     end
 end
