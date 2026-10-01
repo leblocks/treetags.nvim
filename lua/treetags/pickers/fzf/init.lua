@@ -1,3 +1,5 @@
+local FzfLuaPickerBuilder = require('treetags.pickers.fzf.builder')
+
 -- TODO refactor
 local ok, _ = pcall(require, 'fzf-lua')
 if not ok then
@@ -21,7 +23,7 @@ local function parse_entry(entry, items)
     return item.path, item.row, item.column, item.kind, item.parser_name
 end
 
-local get_picker = function(items_provider, formatter)
+local get_live_picker = function(items_provider, formatter)
     local fzf = require('fzf-lua')
     local builtin_previewer = require('fzf-lua.previewer.builtin')
     local actions = require('fzf-lua.actions')
@@ -46,12 +48,12 @@ local get_picker = function(items_provider, formatter)
     end
 
     local picker = function()
-        fzf.fzf_exec(function(fzf_cb)
-            coroutine.wrap(function()
+        fzf.fzf_live(function(args)
+            return coroutine.wrap(function(fzf_cb)
                 local co = coroutine.running()
-                items = items_provider()
+                items = items_provider(args[1])
 
-                if type(items) ~= 'table' then
+                if items == nil or type(items) ~= 'table' then
                     items = {}
                 end
 
@@ -62,7 +64,7 @@ local get_picker = function(items_provider, formatter)
                     coroutine.yield()
                 end
                 fzf_cb()
-            end)()
+            end)
         end, {
             actions = {
                 ['default'] = function(selected)
@@ -102,6 +104,8 @@ local get_picker = function(items_provider, formatter)
                 ['--wrap'] = false,
                 ['--multi'] = true,
             },
+
+            exec_empty_query = false,
         })
     end
 
@@ -109,20 +113,31 @@ local get_picker = function(items_provider, formatter)
 end
 
 return {
-    treetags_all = get_picker(require('treetags').get_all_treetags, format_entry),
-    treetags_cword = function()
-        local current_word = vim.fn.expand('<cword>')
-        local picker = get_picker(function()
+    treetags_all = FzfLuaPickerBuilder:new()
+        :with_items_provider(require('treetags').get_all_treetags)
+        :with_entry_parser(parse_entry)
+        :with_formatter(format_entry)
+        :build(),
+
+    treetags_cword = FzfLuaPickerBuilder:new()
+        :with_items_provider(function()
+            local current_word = vim.fn.expand('<cword>')
+            print(current_word)
             return require('treetags').get_treetag_by_name(current_word)
-        end, format_entry)
-        picker()
-    end,
-    treetags_cWORD = function()
-        local current_word = vim.fn.expand('<cWORD>')
-        local picker = get_picker(function()
+        end)
+        :with_entry_parser(parse_entry)
+        :with_formatter(format_entry)
+        :build(),
+
+    treetags_cWORD = FzfLuaPickerBuilder:new()
+        :with_items_provider(function()
+            local current_word = vim.fn.expand('<cWORD>')
+            print(current_word)
             return require('treetags').get_treetag_by_name(current_word)
-        end, format_entry)
-        picker()
-    end,
-    treetags_live = function() end,
+        end)
+        :with_entry_parser(parse_entry)
+        :with_formatter(format_entry)
+        :build(),
+
+    treetags_live = get_live_picker(require('treetags.main').__get_treetag_by_name_glob, format_entry)
 }
