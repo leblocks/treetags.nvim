@@ -28,6 +28,15 @@ M.get_treetag_by_name = function(name)
     end)
 end
 
+--- TODO cover in tests
+--- AGENT TODO provide documentation
+---@return Treetag[]
+M.get_treetag_by_name_glob = function(name)
+    return utils.__block_on_processing(function()
+        return main.__get_treetag_by_name_glob(name)
+    end)
+end
+
 --- AGENT TODO provide documentation
 ---@return sqlite_db
 M.get_db = function()

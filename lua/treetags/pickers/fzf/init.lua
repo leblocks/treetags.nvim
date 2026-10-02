@@ -65,7 +65,7 @@ return {
 
     treetags_live = FzfLuaPickerBuilder
         :new()
-        :with_items_provider(require('treetags.main').__get_treetag_by_name_glob)
+        :with_items_provider(require('treetags').get_treetag_by_name_glob)
         :with_entry_parser(parse_entry)
         :with_formatter(format_entry)
         -- AGENT TODO provide prompt with good UX

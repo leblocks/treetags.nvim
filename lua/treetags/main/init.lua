@@ -89,6 +89,7 @@ M.__get_treetag_by_name = function(name)
     return rows
 end
 
+--- TODO should it be case insensitive?
 --- TODO better name for this method?
 --- AGENT TODO provide documentation
 ---@param name string Name of a treetag

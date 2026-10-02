@@ -110,8 +110,10 @@ function FzfLuaPickerBuilder:get_actions()
                 local path, row, column, kind, _, name = self.parser(s, self.items)
 
                 -- TODO no way for consumer to define qf formatting
-                table.insert(qf,
-                    path .. ':' .. row .. ':' .. column .. ':' .. string.format('%-15s', kind) .. ' ' .. name)
+                table.insert(
+                    qf,
+                    path .. ':' .. row .. ':' .. column .. ':' .. string.format('%-15s', kind) .. ' ' .. name
+                )
             end
             -- TODO terrible hack is here, why do we need __resume_key here?
             actions.file_sel_to_qf(qf, { __resume_key = 't' })
