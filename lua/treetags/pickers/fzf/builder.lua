@@ -107,10 +107,13 @@ function FzfLuaPickerBuilder:get_actions()
             local qf = {}
 
             for _, s in ipairs(selected) do
-                local path, row, column = self.parser(s, self.items)
-                table.insert(qf, path .. ':' .. row .. ':' .. column)
+                local path, row, column, kind, _, name = self.parser(s, self.items)
+
+                -- TODO no way for consumer to define qf formatting
+                table.insert(qf,
+                    path .. ':' .. row .. ':' .. column .. ':' .. string.format('%-15s', kind) .. ' ' .. name)
             end
-            -- TODO terrible hack is here
+            -- TODO terrible hack is here, why do we need __resume_key here?
             actions.file_sel_to_qf(qf, { __resume_key = 't' })
         end,
     }
@@ -125,7 +128,7 @@ function FzfLuaPickerBuilder:build()
                 local co = coroutine.running()
                 self.items = self.items_provider()
 
-                if type(self.items) ~= 'table' then
+                if self.items == nil or type(self.items) ~= 'table' then
                     self.items = {}
                 end
 
