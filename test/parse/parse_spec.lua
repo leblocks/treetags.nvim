@@ -59,6 +59,7 @@ describe('treetags.parse', function()
 
     it('__get_parser_name parser name is different from filetype', function()
         assert(parse.__get_parser_name('someclass.cs') == 'c_sharp')
+        assert(parse.__get_parser_name('someclass.ps1') == 'powershell')
     end)
 
     it('__get_parser_name parser name matches filetype', function()

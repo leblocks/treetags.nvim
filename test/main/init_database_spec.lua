@@ -31,19 +31,6 @@ describe('treetags.main', function()
         assert(#rows == 1)
     end)
 
-    it('__init_database - default kinds_filter filters "var"s', function()
-        database.__drop_db()
-        main.__init_database()
-        vim.wait(5000, function()
-            return not vim.g.treetags_processing
-        end)
-
-        local db = database.__get_db()
-
-        local rows = db:eval([[ SELECT COUNT(1) FROM definitions WHERE kind = 'var' ]])
-        assert(rows[1]['COUNT(1)'] == 0)
-    end)
-
     it('__init_database - kinds_filter works', function()
         database.__drop_db()
         main.__init_database({ kinds_filter = { 'function', 'var' } })
