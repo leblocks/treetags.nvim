@@ -1,9 +1,167 @@
+*treetags.txt*                     Project-wide Tree-sitter tags for Neovim
+
 ==============================================================================
-INTRODUCTION                                                     *treetags.txt*
+CONTENTS                                                        *treetags-contents*
 
+1. Introduction ........................................... |treetags-introduction|
+2. Requirements ............................................. |treetags-requirements|
+3. Building the index ......................................... |treetags-indexing|
+4. API ............................................................. |treetags-api|
+5. fzf-lua picker ................................................. |treetags-fzf|
+6. Headless indexing ......................................... |treetags-headless|
 
-AGENT TODO write this vimdoc file based on the repo
+==============================================================================
+INTRODUCTION                                                *treetags-introduction*
 
+treetags.nvim indexes definitions from Tree-sitter "locals" queries, persists
+them in a per-project SQLite database, and provides Lua APIs and an fzf-lua
+picker for navigating the results.
+
+The active database is selected from Neovim's current working directory. Each
+working directory gets a separate database under stdpath('state').
+
+treetags.nvim is the successor to hopcsharp.nvim. Unlike its C#-specific
+predecessor, treetags can index any filetype with an installed Tree-sitter
+parser and a "locals" query.
+
+==============================================================================
+REQUIREMENTS                                                  *treetags-requirements*
+
+- Neovim with vim.system support
+- fd
+- nvim-treesitter and parsers for the languages being indexed
+- sqlite.lua and a native SQLite library
+
+The executable "fd" must be available on $PATH. sqlite.lua must be configured
+to load SQLite according to its platform-specific installation instructions.
+
+==============================================================================
+BUILDING THE INDEX                                                *treetags-indexing*
+
+Build or rebuild the database for the current working directory:
+>
+    require('treetags').init_database()
+<
+
+Initialization is asynchronous. Public queries notify and return while indexing
+is in progress, so they never intentionally read a partially built index.
+
+The optional parameters are:
+>
+    require('treetags').init_database({
+        extensions = { 'lua', 'js', 'cs' },
+        kinds_filter = { 'var' },
+        buffer_size = 1000,
+    })
+<
+
+extensions ~
+    An allow-list of extensions without leading dots. Empty or omitted means
+    that every file returned by fd is considered.
+
+kinds_filter ~
+    A deny-list of kinds derived from Tree-sitter "local.definition.*"
+    captures. Empty or omitted stores every kind.
+
+buffer_size ~
+    The number of definitions buffered before a batch insert. Defaults to 1000.
+
+Files without a recognized filetype, installed parser, or "locals" query are
+reported and skipped. Stored paths are normalized relative paths. Tree-sitter's
+zero-based row and column values are converted to one-based values.
+
+==============================================================================
+API                                                               *treetags-api*
+
+                                                        *treetags.init_database()*
+init_database({params})
+    Clear and asynchronously rebuild the current project's index. {params} is
+    the optional table described in |treetags-indexing|.
+
+                                                      *treetags.get_all_treetags()*
+get_all_treetags()
+    Return every definition in the current project's index.
+
+                                                  *treetags.get_treetag_by_name()*
+get_treetag_by_name({name})
+    Return definitions whose names exactly equal {name}. Nil and empty names
+    return an empty list.
+
+                                             *treetags.get_treetag_by_name_glob()*
+get_treetag_by_name_glob({name})
+    Return definitions whose names contain {name}, using SQLite GLOB matching.
+    Matching is case-sensitive. Nil and empty names return an empty list.
+
+                                                             *treetags.get_db()*
+get_db()
+    Return the underlying sqlite.lua database object for custom queries. The
+    schema contains:
+
+    files
+        id, path
+
+    definitions
+        path_id, kind, parser_name, name, row, column
+
+    The schema is an implementation detail and may change between releases.
+
+                                                          *treetags.get_pickers()*
+get_pickers({picker_type})
+    Return the picker module for {picker_type}. "fzf" is implemented and
+    requires fzf-lua. "telescope" is reserved but not implemented.
+
+Lookup functions return a list of Treetag tables:
+>
+    {
+        name = 'MyFunction',
+        kind = 'function',
+        path = 'lua/example.lua',
+        row = 10,
+        column = 7,
+        parser_name = 'lua',
+    }
+<
+
+==============================================================================
+FZF-LUA PICKER                                                    *treetags-fzf*
+
+Get the fzf-lua integration and map its picker functions:
+>
+    local pickers = require('treetags').get_pickers('fzf')
+
+    vim.keymap.set('n', '<leader>ta', pickers.treetags_all)
+    vim.keymap.set('n', '<leader>tw', pickers.treetags_cword)
+    vim.keymap.set('n', '<leader>tW', pickers.treetags_cWORD)
+    vim.keymap.set('n', '<leader>tl', pickers.treetags_live)
+<
+
+treetags_all ~
+    Show every indexed definition.
+
+treetags_cword ~
+    Show exact matches for |<cword>|.
+
+treetags_cWORD ~
+    Show exact matches for |<cWORD>|.
+
+treetags_live ~
+    Query the index by substring as the prompt changes.
+
+The default action opens a definition. CTRL-V opens a vertical split, CTRL-S a
+horizontal split, and CTRL-T a tab. ALT-Q sends selected definitions to the
+quickfix list.
+
+==============================================================================
+HEADLESS INDEXING                                                *treetags-headless*
+
+Run Neovim from the project directory. Because initialization is asynchronous,
+wait for the processing flag before quitting:
+>
+    nvim --headless \
+      -c "lua require('treetags').init_database()" \
+      -c "lua vim.wait(600000, function() return not vim.g.treetags_processing end)" \
+      -c "qall"
+<
 
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl:
