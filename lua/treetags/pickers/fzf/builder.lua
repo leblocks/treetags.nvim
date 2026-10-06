@@ -1,15 +1,16 @@
----@class FzfLuaPickerBuilder AGENT TODO finish description
----@field with_items_provider function
----@field with_formatter function
----@field with_entry_parser function
----@field with_exec_empty_query function
----@field with_prompt function
----@field build function
----@field new function
+---Builder for fzf-lua pickers backed by treetags query functions.
+---@class FzfLuaPickerBuilder
+---@field items Treetag[]
+---@field items_provider function
+---@field formatter function
+---@field parser function
+---@field prompt string
+---@field exec_empty_query boolean
+---@field fzf_opts table
 
 local FzfLuaPickerBuilder = {}
 
--- AGENT TODO finish description
+---Create an empty picker builder.
 ---@return FzfLuaPickerBuilder
 function FzfLuaPickerBuilder:new()
     local obj = {
@@ -31,28 +32,32 @@ function FzfLuaPickerBuilder:new()
     return obj
 end
 
--- AGENT TODO finish description
+---Set the function that supplies picker items.
+---@param provider function
 ---@return FzfLuaPickerBuilder
 function FzfLuaPickerBuilder:with_items_provider(provider)
     self.items_provider = provider
     return self
 end
 
--- AGENT TODO finish description
+---Set the function that formats an indexed item for display.
+---@param formatter function
 ---@return FzfLuaPickerBuilder
 function FzfLuaPickerBuilder:with_formatter(formatter)
     self.formatter = formatter
     return self
 end
 
--- AGENT TODO finish description
+---Set the function that maps a displayed entry back to its source location.
+---@param parser function
 ---@return FzfLuaPickerBuilder
 function FzfLuaPickerBuilder:with_entry_parser(parser)
     self.parser = parser
     return self
 end
 
--- AGENT TODO finish description
+---Set the fzf prompt.
+---@param prompt string
 ---@return FzfLuaPickerBuilder
 function FzfLuaPickerBuilder:with_prompt(prompt)
     self.prompt = prompt
@@ -120,7 +125,8 @@ function FzfLuaPickerBuilder:get_actions()
     }
 end
 
--- AGENT TODO finish description
+---Build a picker that loads its items once when opened.
+---@return fun()
 function FzfLuaPickerBuilder:build()
     local fzf = require('fzf-lua')
     return function()

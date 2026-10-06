@@ -1,3 +1,5 @@
+---fzf-lua picker integration for indexed treetags definitions.
+
 local ok, _ = pcall(require, 'fzf-lua')
 if not ok then
     error("treetags.pickers.fzf was required but 'fzf-lua' plugin was not found")
@@ -23,26 +25,22 @@ local function parse_entry(entry, items)
 end
 
 return {
-    treetags_all = FzfLuaPickerBuilder
-        :new()
+    treetags_all = FzfLuaPickerBuilder:new()
         :with_items_provider(require('treetags').get_all_treetags)
         :with_entry_parser(parse_entry)
         :with_formatter(format_entry)
-        -- AGENT TODO provide prompt with good UX
-        :with_prompt('')
+        :with_prompt('Treetags > ')
         :build(),
 
     treetags_cword = function()
         local current_word = vim.fn.expand('<cword>')
-        local picker = FzfLuaPickerBuilder
-            :new()
+        local picker = FzfLuaPickerBuilder:new()
             :with_items_provider(function()
                 return require('treetags').get_treetag_by_name(current_word)
             end)
             :with_entry_parser(parse_entry)
             :with_formatter(format_entry)
-            -- AGENT TODO provide prompt with good UX
-            :with_prompt(current_word .. ' > ')
+            :with_prompt('Treetags [' .. current_word .. '] > ')
             :build()
 
         picker()
@@ -50,25 +48,21 @@ return {
 
     treetags_cWORD = function()
         local current_word = vim.fn.expand('<cWORD>')
-        local picker = FzfLuaPickerBuilder
-            :new()
+        local picker = FzfLuaPickerBuilder:new()
             :with_items_provider(function()
                 return require('treetags').get_treetag_by_name(current_word)
             end)
             :with_entry_parser(parse_entry)
             :with_formatter(format_entry)
-            -- AGENT TODO provide prompt with good UX
-            :with_prompt(current_word .. ' > ')
+            :with_prompt('Treetags [' .. current_word .. '] > ')
             :build()
         picker()
     end,
 
-    treetags_live = FzfLuaPickerBuilder
-        :new()
+    treetags_live = FzfLuaPickerBuilder:new()
         :with_items_provider(require('treetags').get_treetag_by_name_glob)
         :with_entry_parser(parse_entry)
         :with_formatter(format_entry)
-        -- AGENT TODO provide prompt with good UX
-        :with_prompt(' > ')
+        :with_prompt('Treetags live > ')
         :build_live(),
 }

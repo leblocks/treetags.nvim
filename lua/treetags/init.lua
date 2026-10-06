@@ -4,15 +4,15 @@ local utils = require('treetags.main.utils')
 
 local M = {}
 
---- AGENT TODO provide documentation
----@param params TreetagsDatabaseInitParams object
+---Clear and asynchronously rebuild the definition index for the current working directory.
+---@param params? TreetagsDatabaseInitParams
 M.init_database = function(params)
     utils.__block_on_processing(function()
         main.__init_database(params)
     end)
 end
 
---- AGENT TODO provide documentation
+---Return all indexed definitions for the current working directory.
 ---@return Treetag[]
 M.get_all_treetags = function()
     return utils.__block_on_processing(function()
@@ -20,7 +20,8 @@ M.get_all_treetags = function()
     end)
 end
 
---- AGENT TODO provide documentation
+---Return indexed definitions whose name exactly matches `name`.
+---@param name? string
 ---@return Treetag[]
 M.get_treetag_by_name = function(name)
     return utils.__block_on_processing(function()
@@ -28,8 +29,8 @@ M.get_treetag_by_name = function(name)
     end)
 end
 
---- TODO cover in tests
---- AGENT TODO provide documentation
+---Return indexed definitions whose name contains `name` using SQLite GLOB matching.
+---@param name? string
 ---@return Treetag[]
 M.get_treetag_by_name_glob = function(name)
     return utils.__block_on_processing(function()
@@ -37,7 +38,7 @@ M.get_treetag_by_name_glob = function(name)
     end)
 end
 
---- AGENT TODO provide documentation
+---Return the underlying sqlite.lua database for custom queries.
 ---@return sqlite_db
 M.get_db = function()
     return utils.__block_on_processing(function()
@@ -45,24 +46,23 @@ M.get_db = function()
     end)
 end
 
---- AGENT TODO finish documentation of this class
----@class TreetagPickers object
----@field treetags_all function
----@field treetags_cword function
----@field treetags_cWORD function
----@field treetags_live function
+---Picker functions backed by the treetags index.
+---@class TreetagPickers
+---@field treetags_all fun(): nil Open a picker containing every indexed definition.
+---@field treetags_cword fun(): nil Open exact matches for the word under the cursor.
+---@field treetags_cWORD fun(): nil Open exact matches for the WORD under the cursor.
+---@field treetags_live fun(): nil Open a live substring-search picker.
 
---- AGENT TODO provide documentation
----@param picker_type string Possible values fzf, telescope
+---Return the requested optional picker integration.
+---@param picker_type '"fzf"'|'"telescope"'
 ---@return TreetagPickers
 M.get_pickers = function(picker_type)
     if picker_type == 'fzf' then
         return require('treetags.pickers.fzf')
     elseif picker_type == 'telescope' then
-        -- TODO
         return require('treetags.pickers.telescope')
     else
-        error('AGENT TODO error message')
+        error(string.format("unknown treetags picker '%s'; expected 'fzf' or 'telescope'", tostring(picker_type)))
     end
 end
 

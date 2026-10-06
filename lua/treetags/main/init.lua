@@ -1,11 +1,11 @@
---- AGENT TODO provide clear documentation
----@class TreetagsDatabaseInitParams object
----@field extensions string[] List of file extensions to parse, if empty try to parse everything
----@field kinds_filter string[] List of kinds to not store in database, if empty store every kind, defaults to { 'var' }
----@field buffer_size number Number of entries to buffer before flushing to the database during init
+---Options used when rebuilding a treetags database.
+---@class TreetagsDatabaseInitParams
+---@field extensions? string[] File extensions to parse; empty parses every file returned by fd.
+---@field kinds_filter? string[] Definition kinds to exclude; empty stores every kind.
+---@field buffer_size? number Entries to buffer before flushing to the database; defaults to 1000.
 
---- AGENT TODO finish documentation of this class
----@class Treetag object
+---An indexed Tree-sitter definition.
+---@class Treetag
 ---@field column number
 ---@field kind string
 ---@field name string
@@ -23,7 +23,8 @@ local M = {}
 
 vim.g.treetags_processing = false
 
----@param params TreetagsDatabaseInitParams object
+---Clear and asynchronously rebuild the definition index for the current working directory.
+---@param params? TreetagsDatabaseInitParams
 M.__init_database = function(params)
     vim.g.treetags_processing = true
     database.__drop_db()
@@ -56,7 +57,7 @@ M.__init_database = function(params)
     end)
 end
 
---- AGENT TODO provide documentation
+---Return all indexed definitions.
 ---@return Treetag[]
 M.__get_all_treetags = function()
     local db = database.__get_db()
@@ -70,8 +71,8 @@ M.__get_all_treetags = function()
     return rows
 end
 
---- AGENT TODO provide documentation
----@param name string Name of a treetag
+---Return indexed definitions whose name exactly matches `name`.
+---@param name? string Name of a treetag.
 ---@return Treetag[]
 M.__get_treetag_by_name = function(name)
     if name == nil or name == '' then
@@ -89,10 +90,9 @@ M.__get_treetag_by_name = function(name)
     return rows
 end
 
---- TODO should it be case insensitive?
---- TODO better name for this method?
---- AGENT TODO provide documentation
----@param name string Name of a treetag
+---Return indexed definitions whose name contains `name`.
+---Matching intentionally remains case-sensitive to preserve source-language identifier casing.
+---@param name? string Partial name of a treetag.
 ---@return Treetag[]
 M.__get_treetag_by_name_glob = function(name)
     if name == nil or name == '' then
