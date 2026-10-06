@@ -89,21 +89,25 @@ function FzfLuaPickerBuilder:get_actions()
     local actions = require('fzf-lua.actions')
     return {
         ['default'] = function(selected, opts)
+            if #selected == 0 then return end
             local path, row, column = self.parser(selected[1], self.items)
             actions.file_switch_or_edit({ path .. ':' .. row .. ':' .. column }, opts)
         end,
 
         ['ctrl-v'] = function(selected, opts)
+            if #selected == 0 then return end
             local path, row, column = self.parser(selected[1], self.items)
             actions.file_vsplit({ path .. ':' .. row .. ':' .. column }, opts)
         end,
 
         ['ctrl-s'] = function(selected, opts)
+            if #selected == 0 then return end
             local path, row, column = self.parser(selected[1], self.items)
             actions.file_split({ path .. ':' .. row .. ':' .. column }, opts)
         end,
 
         ['ctrl-t'] = function(selected, opts)
+            if #selected == 0 then return end
             local path, row, column = self.parser(selected[1], self.items)
             actions.file_tabedit({ path .. ':' .. row .. ':' .. column }, opts)
         end,
@@ -120,6 +124,7 @@ function FzfLuaPickerBuilder:get_actions()
                     path .. ':' .. row .. ':' .. column .. ':' .. string.format('%-15s', kind) .. ' ' .. name
                 )
             end
+            if #selected == 0 then return end
             actions.file_sel_to_qf(qf, opts)
         end,
     }
