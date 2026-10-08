@@ -7,8 +7,7 @@ M.get_all_tags = function()
             d.kind,
             f.path,
             d.row,
-            d.column,
-            d.parser_name
+            d.column
         FROM definitions d
         JOIN files f ON f.id = d.path_id
         ORDER BY
@@ -24,8 +23,7 @@ M.get_tags_by_name = function(name)
             d.kind,
             f.path,
             d.row,
-            d.column,
-            d.parser_name
+            d.column
         FROM definitions d
         JOIN files f ON f.id = d.path_id
         WHERE d.name = '%s'
@@ -44,8 +42,7 @@ M.get_tags_by_name_glob = function(name)
             d.kind,
             f.path,
             d.row,
-            d.column,
-            d.parser_name
+            d.column
         FROM definitions d
         JOIN files f ON f.id = d.path_id
         WHERE d.name GLOB '*%s*'

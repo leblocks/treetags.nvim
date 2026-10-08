@@ -104,7 +104,7 @@ end
 M.__parse_file = function(file_path, filtered_kinds, buffered_writer)
     local should_skip_kinds_check = filtered_kinds == nil or #filtered_kinds == 0
 
-    M.__parse_tree(file_path, function(tree, query, parser_name, path_id, file_content, b_wr)
+    M.__parse_tree(file_path, function(tree, query, _, path_id, file_content, b_wr)
         local root = tree:root()
         local visited = {}
         for id, node, _, _ in query:iter_captures(root, file_content, 0, -1) do
@@ -138,7 +138,6 @@ M.__parse_file = function(file_path, filtered_kinds, buffered_writer)
                     path_id = path_id,
                     kind = kind,
                     name = name,
-                    parser_name = parser_name,
                     row = row + 1,
                     column = col + 1,
                 })

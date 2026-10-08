@@ -9,7 +9,6 @@
 ---@field column number
 ---@field kind string
 ---@field name string
----@field parser_name string
 ---@field row number
 ---@field path string
 

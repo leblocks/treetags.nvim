@@ -16,7 +16,6 @@ local init_db = function()
         definitions = {
             path_id = { type = 'integer', reference = 'files.id' },
             kind = 'string',
-            parser_name = 'string',
             name = 'text',
             row = 'integer',
             column = 'integer',

@@ -148,6 +148,5 @@ All documentation in this repo was prepared with assistance from AI.
 ## TODOs
 * add example with pre-defined command for headless parsing
 * giff with example usage
-* drop parser_name from db, no need to use it
 * work on telescope support
 * check health implementation

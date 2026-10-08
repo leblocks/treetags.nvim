@@ -10,11 +10,19 @@ describe('treetags.main', function()
         end)
 
         local db = database.__get_db()
-
-        local rows = db:eval([[ SELECT DISTINCT parser_name FROM definitions ORDER BY parser_name ]])
-        assert(rows[1].parser_name == 'c_sharp')
-        assert(rows[2].parser_name == 'javascript')
-        assert(rows[3].parser_name == 'lua')
+        local files = db:eval([[
+            SELECT DISTINCT substr(path, instr(path, '.') + 1) AS extension
+            FROM files
+            ORDER BY path
+        ]])
+        assert(files[1].extension == 'LICENSE')
+        assert(files[2].extension == 'Makefile')
+        assert(files[3].extension == 'md')
+        assert(files[4].extension == 'doc/tags')
+        assert(files[5].extension == 'txt')
+        assert(files[6].extension == 'lua')
+        assert(files[7].extension == 'cs')
+        assert(files[8].extension == 'js')
     end)
 
     it('__init_database - extensions filters work', function()
@@ -26,9 +34,14 @@ describe('treetags.main', function()
 
         local db = database.__get_db()
 
-        local rows = db:eval([[ SELECT DISTINCT parser_name FROM definitions ORDER BY parser_name ]])
-        assert(rows[1].parser_name == 'c_sharp')
-        assert(#rows == 1)
+        local files = db:eval([[
+            SELECT DISTINCT substr(path, instr(path, '.') + 1) AS extension
+            FROM files
+            ORDER BY path
+        ]])
+
+        assert(files[1].extension == 'cs')
+        assert(#files == 1)
     end)
 
     it('__init_database - kinds_filter works', function()
@@ -57,9 +70,6 @@ describe('treetags.main', function()
         local db = database.__get_db()
 
         local rows = db:eval([[ SELECT COUNT(1) FROM definitions WHERE kind IS NULL ]])
-        assert(rows[1]['COUNT(1)'] == 0)
-
-        rows = db:eval([[ SELECT COUNT(1) FROM definitions WHERE parser_name IS NULL ]])
         assert(rows[1]['COUNT(1)'] == 0)
 
         rows = db:eval([[ SELECT COUNT(1) FROM definitions WHERE name IS NULL ]])

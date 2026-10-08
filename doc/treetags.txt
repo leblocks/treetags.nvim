@@ -101,7 +101,7 @@ get_db()
         id, path
 
     definitions
-        path_id, kind, parser_name, name, row, column
+        path_id, kind, name, row, column
 
     The schema is an implementation detail and may change between releases.
 
@@ -118,7 +118,6 @@ Lookup functions return a list of Treetag tables:
         path = 'lua/example.lua',
         row = 10,
         column = 7,
-        parser_name = 'lua',
     }
 <
 

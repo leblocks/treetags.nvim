@@ -21,7 +21,7 @@ local function parse_entry(entry, items)
 
     local item = items[id]
 
-    return item.path, item.row, item.column, item.kind, item.parser_name, item.name
+    return item.path, item.row, item.column, item.kind, item.name
 end
 
 return {
