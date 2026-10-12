@@ -146,7 +146,5 @@ nvim --headless -c "lua require('treetags').init_database()" \
 All documentation in this repo was prepared with assistance from AI.
 
 ## TODOs
-* add example with pre-defined command for headless parsing
 * giff with example usage
 * work on telescope support
-* check health implementation
