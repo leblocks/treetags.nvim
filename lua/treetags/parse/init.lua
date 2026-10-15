@@ -31,18 +31,13 @@ M.__get_parser_name = function(filename)
         return nil
     end
 
-    local map = {
-        cs = 'c_sharp',
-        ps1 = 'powershell',
-    }
-
     local filetype = vim.filetype.match({ filename = filename })
 
-    if map[filetype] then
-        return map[filetype]
+    if not filetype then
+        return nil
     end
 
-    return filetype
+    return vim.treesitter.language.get_lang(filetype) or filetype
 end
 
 M.__parse_tree = function(file_path, callback, buffered_writer)
