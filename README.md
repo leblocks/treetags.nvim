@@ -147,4 +147,3 @@ All documentation in this repo was prepared with assistance from AI.
 
 ## TODOs
 * giff with example usage
-* work on telescope support

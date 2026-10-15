@@ -5,10 +5,15 @@ if not ok then
     error("treetags.pickers.fzf was required but 'fzf-lua' plugin was not found")
 end
 
+local utils = require('treetags.pickers.utils')
+
 local FzfLuaPickerBuilder = require('treetags.pickers.fzf.builder')
 
 local function format_entry(i, entry)
-    return string.format('%-15s %-50s %-30s [%s]', '[' .. entry.kind .. ']', entry.name, vim.fs.basename(entry.path), i)
+    -- fzf needs index information to retrieve value from
+    -- the captured table, so we keep it on a line in a picker
+    -- see how parse_entry gets it
+    return utils.__format_entry(entry) .. '[' .. i .. ']'
 end
 
 local function parse_entry(entry, items)
