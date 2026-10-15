@@ -45,23 +45,27 @@ function TelescopePickerBuilder:new_table()
         local finders = require('telescope.finders')
         local conf = require('telescope.config').values
         opts = opts or {}
-        pickers.new(opts, {
-            prompt_title = self.prompt,
-            finder = finders.new_table({
-                results = self.items_provider(),
-                entry_maker = function(entry)
-                    return {
-                        value = entry,
-                        display = function(tbl) return self.formatter(tbl.value) end,
-                        ordinal = entry.name,
-                        path = entry.path,
-                        lnum = entry.row,
-                    }
-                end,
-            }),
-            previewer = conf.file_previewer(opts),
-            sorter = conf.generic_sorter(opts),
-        }):find()
+        pickers
+            .new(opts, {
+                prompt_title = self.prompt,
+                finder = finders.new_table({
+                    results = self.items_provider(),
+                    entry_maker = function(entry)
+                        return {
+                            value = entry,
+                            display = function(tbl)
+                                return self.formatter(tbl.value)
+                            end,
+                            ordinal = entry.name,
+                            path = entry.path,
+                            lnum = entry.row,
+                        }
+                    end,
+                }),
+                previewer = conf.file_previewer(opts),
+                sorter = conf.generic_sorter(opts),
+            })
+            :find()
     end
 end
 
@@ -71,28 +75,32 @@ function TelescopePickerBuilder:new_dynamic()
         local finders = require('telescope.finders')
         local conf = require('telescope.config').values
         opts = opts or {}
-        pickers.new(opts, {
-            prompt_title = self.prompt,
-            finder = finders.new_dynamic({
-                fn = function(prompt)
-                    if not prompt or prompt == '' then
-                        return {}
-                    end
-                    return self.items_provider(prompt)
-                end,
-                entry_maker = function(entry)
-                    return {
-                        value = entry,
-                        display = function(tbl) return self.formatter(tbl.value) end,
-                        ordinal = entry.name,
-                        path = entry.path,
-                        lnum = entry.row,
-                    }
-                end
-            }),
-            previewer = conf.file_previewer(opts),
-            sorter = conf.generic_sorter(opts),
-        }):find()
+        pickers
+            .new(opts, {
+                prompt_title = self.prompt,
+                finder = finders.new_dynamic({
+                    fn = function(prompt)
+                        if not prompt or prompt == '' then
+                            return {}
+                        end
+                        return self.items_provider(prompt)
+                    end,
+                    entry_maker = function(entry)
+                        return {
+                            value = entry,
+                            display = function(tbl)
+                                return self.formatter(tbl.value)
+                            end,
+                            ordinal = entry.name,
+                            path = entry.path,
+                            lnum = entry.row,
+                        }
+                    end,
+                }),
+                previewer = conf.file_previewer(opts),
+                sorter = conf.generic_sorter(opts),
+            })
+            :find()
     end
 end
 
