@@ -177,7 +177,12 @@ function FzfLuaPickerBuilder:build_live()
         fzf.fzf_live(function(args)
             return coroutine.wrap(function(fzf_cb)
                 local co = coroutine.running()
-                self.items = self.items_provider(args[1])
+
+                if not args[1] or args[1] == '' then
+                    self.items = {}
+                else
+                    self.items = self.items_provider(args[1])
+                end
 
                 if self.items == nil or type(self.items) ~= 'table' then
                     self.items = {}

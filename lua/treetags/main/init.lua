@@ -20,6 +20,19 @@ local BufferedWriter = require('treetags.database.buffer')
 
 local M = {}
 
+local function safe_db_call(callback)
+    local ok, result = pcall(callback)
+    if ok then
+        if type(result) ~= 'table' then
+            return {}
+        else
+            return result
+        end
+    else
+        return {}
+    end
+end
+
 vim.g.treetags_processing = false
 
 ---Clear and asynchronously rebuild the definition index for the current working directory.
@@ -60,33 +73,19 @@ end
 ---@return Treetag[]
 M.__get_all_treetags = function()
     local db = database.__get_db()
-
-    local rows = db:eval(query.get_all_tags())
-
-    if type(rows) ~= 'table' then
-        return {}
-    end
-
-    return rows
+    return safe_db_call(function()
+        return db:eval(query.get_all_tags())
+    end)
 end
 
 ---Return indexed definitions whose name exactly matches `name`.
 ---@param name? string Name of a treetag.
 ---@return Treetag[]
 M.__get_treetag_by_name = function(name)
-    if name == nil or name == '' then
-        return {}
-    end
-
     local db = database.__get_db()
-
-    local rows = db:eval(query.get_tags_by_name(name))
-
-    if type(rows) ~= 'table' then
-        return {}
-    end
-
-    return rows
+    return safe_db_call(function()
+        return db:eval(query.get_tags_by_name(name))
+    end)
 end
 
 ---Return indexed definitions whose name contains `name`.
@@ -94,19 +93,10 @@ end
 ---@param name? string Partial name of a treetag.
 ---@return Treetag[]
 M.__get_treetag_by_name_glob = function(name)
-    if name == nil or name == '' then
-        return {}
-    end
-
     local db = database.__get_db()
-
-    local rows = db:eval(query.get_tags_by_name_glob(name))
-
-    if type(rows) ~= 'table' then
-        return {}
-    end
-
-    return rows
+    return safe_db_call(function()
+        return db:eval(query.get_tags_by_name_glob(name))
+    end)
 end
 
 return M
