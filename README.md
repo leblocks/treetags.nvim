@@ -1,10 +1,39 @@
 # treetags.nvim
 
-`treetags.nvim` is a project-wide source-code index for Neovim. It extracts
-definitions from Tree-sitter `locals` queries, stores them in a per-project
-SQLite database, and exposes lookup APIs and
+**Find definitions across your project, even without a language server.**
+`treetags.nvim` brings ctags-style navigation to Neovim, using Tree-sitter
+instead of a ctags executable to build the index. Search definitions by name,
+look up the word under your cursor, or browse the project's symbols with
 [fzf-lua](https://github.com/ibhagwan/fzf-lua) or
-[Telescope](https://github.com/nvim-telescope/telescope.nvim) pickers.
+[Telescope](https://github.com/nvim-telescope/telescope.nvim).
+
+### Why treetags?
+
+An LSP understands what a symbol means in context. A tags index gives you
+another way into the code: find definitions by name across the project,
+without needing a language server or a fully configured build environment.
+`treetags.nvim` fills that role using Neovim's Tree-sitter parsers and `locals`
+queries, with no separate ctags executable or tags file to manage.
+
+Use it to:
+
+- **Explore unfamiliar code:** browse indexed definitions or search a partial
+  name when you know the symbol but not the file.
+- **Navigate without an LSP:** find definitions in projects where a language
+  server is unavailable, not configured, or unable to load the project.
+- **Search across languages:** use one picker for definitions from supported
+  languages throughout a mixed-language repository.
+- **Complement LSP navigation:** look up definitions by name independently of
+  whether the language server can resolve the reference under your cursor.
+
+This is name-based navigation, not semantic resolution: matching names can
+produce multiple results, and it does not replace LSP references or rename.
+Language coverage and indexed definition kinds depend on the installed
+Tree-sitter parsers and their `locals` queries.
+
+Build the index once, then query the per-project SQLite database from a picker
+or the Lua API. Indexing runs asynchronously; rebuild it when you want to
+refresh results after source changes.
 
 The plugin is the successor to
 [hopcsharp.nvim](https://github.com/leblocks/hopcsharp.nvim), generalized from
@@ -29,7 +58,7 @@ instructions for platform-specific configuration.
 Using [packer.nvim](https://github.com/wbthomason/packer.nvim):
 
 ```lua
-use({ 'leblocks/treetags.nvim', requires = { { 'kkharji/sqlite.lua' } } })
+use({ 'leblocks/treetags.nvim', requires = { { 'kkharji/sqlite.lua', 'nvim-treesitter/nvim-treesitter' } } })
 ```
 
 There is no setup function. Build the index after changing Neovim's working
@@ -171,5 +200,6 @@ nvim --headless -c "lua require('treetags').init_database()" \
 
 All documentation in this repo was prepared with assistance from AI.
 
-## TODOs
-* giff with example usage
+## Next steps
+- Add incremental indexing.
+- Support additional picker integrations.
