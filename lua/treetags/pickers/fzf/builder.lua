@@ -124,7 +124,7 @@ function FzfLuaPickerBuilder:get_actions()
             local qf = {}
 
             for _, s in ipairs(selected) do
-                local path, row, column, kind, _, name = self.parser(s, self.items)
+                local path, row, column, kind, name = self.parser(s, self.items)
 
                 -- TODO no way for consumer to define qf formatting
                 table.insert(
