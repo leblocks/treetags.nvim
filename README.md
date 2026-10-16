@@ -7,6 +7,8 @@ look up the word under your cursor, or browse the project's symbols with
 [fzf-lua](https://github.com/ibhagwan/fzf-lua) or
 [Telescope](https://github.com/nvim-telescope/telescope.nvim).
 
+[![bQOcY.gif](https://s15.gifyu.com/images/bQOcY.gif)](https://gifyu.com/image/bQOcY)
+
 ### Why treetags?
 
 An LSP understands what a symbol means in context. A tags index gives you
