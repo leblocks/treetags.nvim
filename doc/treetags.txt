@@ -8,14 +8,15 @@ CONTENTS                                                        *treetags-conten
 3. Building the index ......................................... |treetags-indexing|
 4. API ............................................................. |treetags-api|
 5. fzf-lua picker ................................................. |treetags-fzf|
-6. Headless indexing ......................................... |treetags-headless|
+6. Telescope pickers ......................................... |treetags-telescope|
+7. Headless indexing ......................................... |treetags-headless|
 
 ==============================================================================
 INTRODUCTION                                                *treetags-introduction*
 
 treetags.nvim indexes definitions from Tree-sitter "locals" queries, persists
-them in a per-project SQLite database, and provides Lua APIs and an fzf-lua
-picker for navigating the results.
+them in a per-project SQLite database, and provides Lua APIs and fzf-lua or
+Telescope pickers for navigating the results.
 
 The active database is selected from Neovim's current working directory. Each
 working directory gets a separate database under stdpath('state').
@@ -31,6 +32,7 @@ REQUIREMENTS                                                  *treetags-requirem
 - fd
 - nvim-treesitter and parsers for the languages being indexed
 - sqlite.lua and a native SQLite library
+- Optional: fzf-lua or telescope.nvim, with its dependencies, for pickers
 
 The executable "fd" must be available on $PATH. sqlite.lua must be configured
 to load SQLite according to its platform-specific installation instructions.
@@ -107,8 +109,9 @@ get_db()
 
                                                           *treetags.get_pickers()*
 get_pickers({picker_type})
-    Return the picker module for {picker_type}. "fzf" is implemented and
-    requires fzf-lua. "telescope" is reserved but not implemented.
+    Return the picker module for {picker_type}. "fzf" requires fzf-lua; see
+    |treetags-fzf|. "telescope" requires telescope.nvim and its dependencies;
+    see |treetags-telescope|. Only the requested integration is loaded.
 
 Lookup functions return a list of Treetag tables:
 >
@@ -149,6 +152,43 @@ treetags_live ~
 The default action opens a definition. CTRL-V opens a vertical split, CTRL-S a
 horizontal split, and CTRL-T a tab. ALT-Q sends selected definitions to the
 quickfix list.
+
+==============================================================================
+TELESCOPE PICKERS                                            *treetags-telescope*
+
+Get the Telescope integration and map its picker functions:
+>
+    local pickers = require('treetags').get_pickers('telescope')
+
+    vim.keymap.set('n', '<leader>ta', pickers.treetags_all)
+    vim.keymap.set('n', '<leader>tw', pickers.treetags_cword)
+    vim.keymap.set('n', '<leader>tW', pickers.treetags_cWORD)
+    vim.keymap.set('n', '<leader>tl', pickers.treetags_live)
+<
+
+treetags_all ~
+    Show every indexed definition.
+
+treetags_cword ~
+    Show exact matches for |<cword>|.
+
+treetags_cWORD ~
+    Show exact matches for |<cWORD>|.
+
+treetags_live ~
+    Query the index as the prompt changes using case-sensitive SQLite GLOB
+    substring matching. An empty prompt shows no results.
+
+Each picker uses Telescope's configured file previewer and generic sorter,
+and accepts an optional Telescope options table:
+>
+    vim.keymap.set('n', '<leader>ta', function()
+        pickers.treetags_all({ layout_strategy = 'vertical' })
+    end)
+<
+
+Navigation, split/tab actions, multi-selection, and quickfix export use your
+Telescope mappings, not the fzf-specific mappings in |treetags-fzf|.
 
 ==============================================================================
 HEADLESS INDEXING                                                *treetags-headless*

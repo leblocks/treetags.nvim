@@ -2,10 +2,9 @@
 
 `treetags.nvim` is a project-wide source-code index for Neovim. It extracts
 definitions from Tree-sitter `locals` queries, stores them in a per-project
-SQLite database, and exposes lookup APIs and an
-[fzf-lua](https://github.com/ibhagwan/fzf-lua) picker. (telescope development
-is in progress)
-
+SQLite database, and exposes lookup APIs and
+[fzf-lua](https://github.com/ibhagwan/fzf-lua) or
+[Telescope](https://github.com/nvim-telescope/telescope.nvim) pickers.
 
 The plugin is the successor to
 [hopcsharp.nvim](https://github.com/leblocks/hopcsharp.nvim), generalized from
@@ -18,8 +17,9 @@ parser, and `locals` query.
 - [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter), with
   parsers installed for the languages to index
 - [sqlite.lua](https://github.com/kkharji/sqlite.lua)
-- Optional: [fzf-lua](https://github.com/ibhagwan/fzf-lua) for the built-in
-  picker
+- Optional: [fzf-lua](https://github.com/ibhagwan/fzf-lua) or
+  [Telescope](https://github.com/nvim-telescope/telescope.nvim), with its
+  dependencies, for picker integration
 
 `sqlite.lua` must be able to load a native SQLite library. See its installation
 instructions for platform-specific configuration.
@@ -126,9 +126,35 @@ Inside a picker, the default action opens the selected definition. Use
 `Ctrl-V`, `Ctrl-S`, or `Ctrl-T` for a vertical split, horizontal split, or tab.
 Use `Alt-Q` to send selected definitions to the quickfix list.
 
-### telescope pickers
+### Telescope pickers
 
-The Telescope picker is not implemented, yet.
+The Telescope integration provides the same four lookup functions, with file
+previews and Telescope's configured sorting, mappings, and actions:
+
+```lua
+local pickers = require('treetags').get_pickers('telescope')
+
+vim.keymap.set('n', '<leader>ta', pickers.treetags_all)
+vim.keymap.set('n', '<leader>tw', pickers.treetags_cword)
+vim.keymap.set('n', '<leader>tW', pickers.treetags_cWORD)
+vim.keymap.set('n', '<leader>tl', pickers.treetags_live)
+```
+
+`treetags_all` lists every indexed definition. `treetags_cword` and
+`treetags_cWORD` list exact matches for `<cword>` and `<cWORD>` under the cursor.
+`treetags_live` queries the index as you type using case-sensitive SQLite GLOB
+substring matching; an empty prompt shows no results.
+
+Each Telescope picker accepts an optional options table:
+
+```lua
+vim.keymap.set('n', '<leader>ta', function()
+    pickers.treetags_all({ layout_strategy = 'vertical' })
+end)
+```
+
+Navigation, split/tab actions, multi-selection, and quickfix export use your
+Telescope mappings rather than the fzf-specific mappings above.
 
 ## Headless indexing
 
