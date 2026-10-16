@@ -20,6 +20,7 @@ local BufferedWriter = require('treetags.database.buffer')
 
 local M = {}
 
+-- TODO move into utils + unit tests
 local function safe_db_call(callback)
     local ok, result = pcall(callback)
     if ok then
