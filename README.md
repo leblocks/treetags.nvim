@@ -19,7 +19,7 @@ Language coverage and definition kinds depend on the installed Tree-sitter
 parsers and their `locals` queries.
 
 [Requirements](#requirements) | [Installation](#-installation) |
-[Quickstart](#-quickstart) | [Indexing](#-indexing) | [Pickers](#-pickers) |
+[Quickstart](#-quickstart) | [Indexing](#%EF%B8%8F-indexing) | [Pickers](#-pickers) |
 [API](#api) | [Advanced usage](#advanced-usage) |
 [Troubleshooting](#-troubleshooting)
 
