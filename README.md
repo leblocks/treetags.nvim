@@ -44,6 +44,8 @@ parsers and their `locals` queries.
 
 ## 📦 Installation
 
+### lazy.nvim
+
 Add this plugin spec to your
 [lazy.nvim](https://github.com/folke/lazy.nvim) configuration:
 
@@ -77,6 +79,35 @@ If you prefer Telescope, replace the fzf-lua dependency with:
 
 Meet the chosen picker's upstream Neovim and external-tool requirements.
 In particular, fzf-lua needs an `fzf` or `skim` executable.
+
+### vim.pack
+
+With Neovim 0.12+, add this to your `init.lua`:
+
+```lua
+vim.pack.add({
+    { src = 'https://github.com/kkharji/sqlite.lua' },
+    {
+        src = 'https://github.com/nvim-treesitter/nvim-treesitter',
+        version = 'main',
+    },
+    { src = 'https://github.com/ibhagwan/fzf-lua' }, -- Optional; used in the quickstart below.
+    { src = 'https://github.com/leblocks/treetags.nvim' },
+})
+```
+
+This requires Git on your `PATH`. The plugins are available after
+`vim.pack.add()` returns; treetags needs no `setup()` call.
+
+Follow the [nvim-treesitter installation instructions](https://github.com/nvim-treesitter/nvim-treesitter/blob/main/README.md)
+to install parsers for your languages. Omit that entry if you already provide
+parsers and `locals.scm` queries another way.
+
+To use Telescope instead, replace the fzf-lua entry with entries for
+`https://github.com/nvim-lua/plenary.nvim` and
+`https://github.com/nvim-telescope/telescope.nvim`.
+The native SQLite library and chosen picker's external tools must still be
+installed separately.
 
 ## 🚀 Quickstart
 
