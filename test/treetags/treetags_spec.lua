@@ -15,6 +15,7 @@ describe('treetags', function()
             FROM files
             ORDER BY path
         ]])
+        -- TODO make better assertion
         assert(#extensions > 3)
     end)
 
