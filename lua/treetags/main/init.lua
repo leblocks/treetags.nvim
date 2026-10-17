@@ -3,6 +3,7 @@
 ---@field extensions? string[] File extensions to parse; empty parses every file returned by fd.
 ---@field kinds_filter? string[] Definition kinds to exclude; empty stores every kind.
 ---@field buffer_size? number Entries to buffer before flushing to the database; defaults to 1000.
+---@field incremental? bool AGENT TODO provide documentation
 
 ---An indexed Tree-sitter definition.
 ---@class Treetag
