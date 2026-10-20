@@ -21,20 +21,6 @@ local BufferedWriter = require('treetags.database.buffer')
 
 local M = {}
 
--- TODO move into utils + unit tests
-local function safe_db_call(callback)
-    local ok, result = pcall(callback)
-    if ok then
-        if type(result) ~= 'table' then
-            return {}
-        else
-            return result
-        end
-    else
-        return {}
-    end
-end
-
 vim.g.treetags_processing = false
 
 ---Clear and asynchronously rebuild the definition index for the current working directory.
@@ -75,7 +61,7 @@ end
 ---@return Treetag[]
 M.__get_all_treetags = function()
     local db = database.__get_db()
-    return safe_db_call(function()
+    return utils.__safe_db_call(function()
         return db:eval(query.get_all_tags())
     end)
 end
@@ -85,7 +71,7 @@ end
 ---@return Treetag[]
 M.__get_treetag_by_name = function(name)
     local db = database.__get_db()
-    return safe_db_call(function()
+    return utils.__safe_db_call(function()
         return db:eval(query.get_tags_by_name(name))
     end)
 end
@@ -96,7 +82,7 @@ end
 ---@return Treetag[]
 M.__get_treetag_by_name_glob = function(name)
     local db = database.__get_db()
-    return safe_db_call(function()
+    return utils.__safe_db_call(function()
         return db:eval(query.get_tags_by_name_glob(name))
     end)
 end

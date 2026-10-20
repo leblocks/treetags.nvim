@@ -96,4 +96,25 @@ describe('utils', function()
     it('__escape_ansi - does not escapes regular string', function()
         assert('test' == utils.__escape_ansi('test'))
     end)
+
+    it('__safe_db call - returns {} on failure', function()
+        assert(#utils.__safe_db_call() == 0)
+        assert(#utils.__safe_db_call(function()
+            return false
+        end) == 0)
+        assert(#utils.__safe_db_call(function()
+            error('wont see me')
+        end) == 0)
+    end)
+
+    it('__safe_db call - happy path', function()
+        local dummy = function()
+            return { 'apple', 'banana', }
+        end
+
+        local actual = utils.__safe_db_call(dummy)
+
+        assert(actual[1] == 'apple')
+        assert(actual[2] == 'banana')
+    end)
 end)
