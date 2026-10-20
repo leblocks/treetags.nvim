@@ -16,6 +16,7 @@
 local parse = require('treetags.parse')
 local utils = require('treetags.main.utils')
 local database = require('treetags.database')
+local database_utils = require('treetags.database.utils')
 local query = require('treetags.database.query')
 local BufferedWriter = require('treetags.database.buffer')
 
@@ -61,7 +62,7 @@ end
 ---@return Treetag[]
 M.__get_all_treetags = function()
     local db = database.__get_db()
-    return utils.__safe_db_call(function()
+    return database_utils.__safe_db_call(function()
         return db:eval(query.get_all_tags())
     end)
 end
@@ -71,7 +72,7 @@ end
 ---@return Treetag[]
 M.__get_treetag_by_name = function(name)
     local db = database.__get_db()
-    return utils.__safe_db_call(function()
+    return database_utils.__safe_db_call(function()
         return db:eval(query.get_tags_by_name(name))
     end)
 end
@@ -82,7 +83,7 @@ end
 ---@return Treetag[]
 M.__get_treetag_by_name_glob = function(name)
     local db = database.__get_db()
-    return utils.__safe_db_call(function()
+    return database_utils.__safe_db_call(function()
         return db:eval(query.get_tags_by_name_glob(name))
     end)
 end

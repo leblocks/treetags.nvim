@@ -60,18 +60,4 @@ M.__escape_ansi = function(string)
     return result
 end
 
--- TODO this should be in a db utils
-M.__safe_db_call = function(callback)
-    local ok, result = pcall(callback)
-    if ok then
-        if type(result) ~= 'table' then
-            return {}
-        else
-            return result
-        end
-    else
-        return {}
-    end
-end
-
 return M

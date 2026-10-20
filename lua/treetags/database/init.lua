@@ -90,6 +90,4 @@ M.__drop_by_path = function(path)
     db:eval('vacuum')
 end
 
-
-
 return M
