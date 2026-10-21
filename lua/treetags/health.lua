@@ -54,6 +54,7 @@ local function check_telescope_optional()
 end
 
 M.check = function()
+    --- TODO check_git
     check_fd()
     check_sqlite_installation()
     check_fzf_lua_optional()
