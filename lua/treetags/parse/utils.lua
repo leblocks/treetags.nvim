@@ -1,7 +1,21 @@
-
 local M = {}
 
---- TODO test
+M.__has_extension = function(file, extensions)
+    if not extensions or #extensions == 0 then
+        return true
+    end
+
+    local extension = vim.fs.ext(file)
+
+    for _, ext in ipairs(extensions) do
+        if extension == ext then
+            return true
+        end
+    end
+
+    return false
+end
+
 M.__get_commit_hash = function()
     local output = vim.system({ 'git', 'rev-parse', 'HEAD' }, { text = true, cwd = vim.fn.getcwd() }):wait()
 
@@ -19,7 +33,8 @@ end
 ---@param start_commit string
 ---@param end_commit string
 ---@param diff_filter string
-M.__get_changed_files = function(start_commit, end_commit, diff_filter)
+---@param extensions string[]
+M.__get_changed_files = function(start_commit, end_commit, diff_filter, extensions)
     local arguments = {
         'git',
         '--no-pager',
@@ -39,7 +54,7 @@ M.__get_changed_files = function(start_commit, end_commit, diff_filter)
     local files = {}
 
     for line in result.stdout:gmatch('([^\n]*)\n?') do
-        if (line ~= '') and (line:match('cs$')) then
+        if (line ~= '') and M.__has_extension(line, extensions) then
             table.insert(files, line)
         end
     end
