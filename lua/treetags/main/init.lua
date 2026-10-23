@@ -13,12 +13,14 @@
 ---@field row number
 ---@field path string
 
-local parse = require('treetags.parse')
-local utils = require('treetags.main.utils')
+local BufferedWriter = require('treetags.database.buffer')
 local database = require('treetags.database')
 local database_utils = require('treetags.database.utils')
+local history = require('treetags.parse.history')
+local parse = require('treetags.parse')
+local parse_utils = require('treetags.parse.utils')
 local query = require('treetags.database.query')
-local BufferedWriter = require('treetags.database.buffer')
+local utils = require('treetags.main.utils')
 
 local M = {}
 
@@ -33,11 +35,32 @@ M.__init_database = function(params)
     local extensions = params.extensions or {}
     local kinds_filter = params.kinds_filter or {}
     local buffer_size = params.buffer_size or 1000
+    local incremental = params.incremental or false
 
     local start = os.time()
     local counter = 0
     local writer = BufferedWriter:new(database.__get_db(), buffer_size)
-    local files = parse.__get_source_files(extensions)
+
+    local files
+
+    if incremental then
+        for _, file in ipairs(parse.__get_changed_source_files(nil, extensions)) do
+            utils.__log('dropping ' .. file)
+            database.__drop_by_path(file)
+        end
+
+        -- 'd' filter out files that were deleted
+        -- so we won't try to reparse those
+        files = parse.__get_changed_source_files('d', extensions)
+    else
+        files = parse.__get_source_files(extensions)
+        utils.__log('dropping whole database')
+        database.__drop_db()
+    end
+
+    -- store new entry in parsing history
+    local current_commit = parse_utils.__get_commit_hash()
+    history.__add_parse_history_entry(current_commit)
 
     utils.__scheduled_iteration(files, function(_, item, items)
         parse.__parse_file(item, kinds_filter, writer)
