@@ -1,6 +1,58 @@
 local parse = require('treetags.parse')
+local utils = require('treetags.parse.utils')
+local database = require('treetags.database')
+
+local first_commit = '49139a0'
+local second_commit = '2722470'
 
 describe('treetags.parse', function()
+    it('__get_changed_source_files - no history ', function()
+        local files = parse.__get_changed_source_files('', {})
+        local all_files = parse.__get_source_files({})
+
+        assert(#files > 0)
+        assert(#files == #all_files)
+        for i = 1, #files, 1 do
+            assert(files[i] == all_files[i])
+        end
+    end)
+
+    it('__get_changed_source_files - (no history) extensions propagated', function()
+        local files = parse.__get_changed_source_files('', { 'md' })
+        local all_files = parse.__get_source_files({ 'md' })
+
+        assert(#files == 1)
+        assert(#files == #all_files)
+        assert(files[1] == 'README.md')
+    end)
+
+    it('__get_changed_source_files - (with history) diff_filter propagated', function()
+        -- prepare history, ho ho ho
+        database.__drop_db()
+        local db = database.__get_db()
+        db:insert('parse_history', { id = 1, commit_hash = first_commit })
+
+        local files    = parse.__get_changed_source_files('a', {})
+        local baseline = utils.__get_changed_files(first_commit, '.', 'a', {})
+        assert(#files == 2)
+        assert(#files == #baseline)
+        assert(files[1] == 'Makefile')
+        assert(files[2] == 'scripts/minimal_init.lua')
+    end)
+
+    it('__get_changed_source_files - (with history) extensions propagated', function()
+        -- prepare history, ho ho ho
+        database.__drop_db()
+        local db = database.__get_db()
+        db:insert('parse_history', { id = 1, commit_hash = first_commit })
+
+        local files    = parse.__get_changed_source_files('a', { 'lua' })
+        local baseline = utils.__get_changed_files(first_commit, '.', 'a', { 'lua' })
+        assert(#files == 1)
+        assert(#files == #baseline)
+        assert(files[1] == 'scripts/minimal_init.lua')
+    end)
+
     it('__get_source_files no arguments', function()
         local files = parse.__get_source_files()
         assert(#files > 0)

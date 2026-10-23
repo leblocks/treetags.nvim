@@ -1,7 +1,23 @@
-local database = require('treetags.database')
 local utils = require('treetags.main.utils')
+local database = require('treetags.database')
+local history = require('treetags.parse.history')
+local parse_utils = require('treetags.parse.utils')
 
 local M = {}
+
+---@param diff_filter string AGENT TODO docs
+---@param extensions string[] AGENT TODO docs
+M.__get_changed_source_files = function(diff_filter, extensions)
+    local last_commit = history.__get_last_parsed_commit()
+
+    -- no history, get all files
+    if last_commit == '' then
+        return M.__get_source_files(extensions)
+    end
+
+    -- get only changed ones
+    return parse_utils.__get_changed_files(last_commit, '.', diff_filter, extensions)
+end
 
 M.__get_source_files = function(extensions)
     local command = { 'fd', '--type', 'file' }
