@@ -27,8 +27,6 @@ M.__get_commit_hash = function()
     return nil
 end
 
---- TODO test
---- TODO refactor?
 --- AGENT TODO complete documentation
 ---@param start_commit string
 ---@param end_commit string
