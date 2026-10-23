@@ -54,7 +54,7 @@ M.__get_changed_files = function(start_commit, end_commit, diff_filter, extensio
 
     for line in result.stdout:gmatch('([^\n]*)\n?') do
         if (line ~= '') and M.__has_extension(line, extensions) then
-            table.insert(files, line)
+            table.insert(files, vim.fs.normalize(line))
         end
     end
 
