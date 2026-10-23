@@ -2,8 +2,7 @@ local parse = require('treetags.parse')
 local utils = require('treetags.parse.utils')
 local database = require('treetags.database')
 
-local first_commit = '49139a0'
-local second_commit = '2722470'
+local some_commit_hash = '49139a0'
 
 describe('treetags.parse', function()
     it('__get_changed_source_files - no history ', function()
@@ -30,10 +29,10 @@ describe('treetags.parse', function()
         -- prepare history, ho ho ho
         database.__drop_db()
         local db = database.__get_db()
-        db:insert('parse_history', { id = 1, commit_hash = first_commit })
+        db:insert('parse_history', { id = 1, commit_hash = some_commit_hash })
 
-        local files    = parse.__get_changed_source_files('a', {})
-        local baseline = utils.__get_changed_files(first_commit, '.', 'a', {})
+        local files = parse.__get_changed_source_files('a', {})
+        local baseline = utils.__get_changed_files(some_commit_hash, '.', 'a', {})
         assert(#files == 2)
         assert(#files == #baseline)
         assert(files[1] == 'Makefile')
@@ -44,10 +43,10 @@ describe('treetags.parse', function()
         -- prepare history, ho ho ho
         database.__drop_db()
         local db = database.__get_db()
-        db:insert('parse_history', { id = 1, commit_hash = first_commit })
+        db:insert('parse_history', { id = 1, commit_hash = some_commit_hash })
 
-        local files    = parse.__get_changed_source_files('a', { 'lua' })
-        local baseline = utils.__get_changed_files(first_commit, '.', 'a', { 'lua' })
+        local files = parse.__get_changed_source_files('a', { 'lua' })
+        local baseline = utils.__get_changed_files(some_commit_hash, '.', 'a', { 'lua' })
         assert(#files == 1)
         assert(#files == #baseline)
         assert(files[1] == 'scripts/minimal_init.lua')
