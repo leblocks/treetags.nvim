@@ -2,6 +2,16 @@ local os = require('os')
 
 local M = {}
 
+local function check_git()
+    vim.health.start('git')
+    local exit_code = os.execute('git --help')
+    if exit_code == 0 then
+        vim.health.ok('git is on PATH')
+    else
+        vim.health.error('git is not on PATH')
+    end
+end
+
 local function check_fd()
     vim.health.start('fd')
     local exit_code = os.execute('fd --help')
@@ -55,6 +65,7 @@ end
 
 M.check = function()
     check_fd()
+    check_git()
     check_sqlite_installation()
     check_fzf_lua_optional()
     check_telescope_optional()

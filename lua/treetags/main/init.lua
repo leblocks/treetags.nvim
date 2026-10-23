@@ -3,6 +3,7 @@
 ---@field extensions? string[] File extensions to parse; empty parses every file returned by fd.
 ---@field kinds_filter? string[] Definition kinds to exclude; empty stores every kind.
 ---@field buffer_size? number Entries to buffer before flushing to the database; defaults to 1000.
+---@field incremental? boolean Incrementally reparse changed Git-tracked files.
 
 ---An indexed Tree-sitter definition.
 ---@class Treetag
@@ -12,27 +13,16 @@
 ---@field row number
 ---@field path string
 
-local parse = require('treetags.parse')
-local utils = require('treetags.main.utils')
-local database = require('treetags.database')
-local query = require('treetags.database.query')
 local BufferedWriter = require('treetags.database.buffer')
+local database = require('treetags.database')
+local database_utils = require('treetags.database.utils')
+local history = require('treetags.parse.history')
+local parse = require('treetags.parse')
+local parse_utils = require('treetags.parse.utils')
+local query = require('treetags.database.query')
+local utils = require('treetags.main.utils')
 
 local M = {}
-
--- TODO move into utils + unit tests
-local function safe_db_call(callback)
-    local ok, result = pcall(callback)
-    if ok then
-        if type(result) ~= 'table' then
-            return {}
-        else
-            return result
-        end
-    else
-        return {}
-    end
-end
 
 vim.g.treetags_processing = false
 
@@ -40,16 +30,50 @@ vim.g.treetags_processing = false
 ---@param params? TreetagsDatabaseInitParams
 M.__init_database = function(params)
     vim.g.treetags_processing = true
-    database.__drop_db()
     params = params or {}
     local extensions = params.extensions or {}
     local kinds_filter = params.kinds_filter or {}
     local buffer_size = params.buffer_size or 1000
+    local incremental = params.incremental or false
 
     local start = os.time()
     local counter = 0
     local writer = BufferedWriter:new(database.__get_db(), buffer_size)
-    local files = parse.__get_source_files(extensions)
+
+    local files
+
+    if incremental then
+        for _, file in ipairs(parse.__get_changed_source_files(nil, extensions)) do
+            utils.__log('dropping ' .. file)
+            database.__drop_by_path(file)
+        end
+
+        -- 'd' filter out files that were deleted
+        -- so we won't try to reparse those
+        files = parse.__get_changed_source_files('d', extensions)
+    else
+        files = parse.__get_source_files(extensions)
+        utils.__log('dropping whole database')
+        database.__drop_db()
+    end
+
+    -- store new entry in parsing history
+    local current_commit = parse_utils.__get_commit_hash()
+    history.__add_parse_history_entry(current_commit)
+
+    local finish = function()
+        writer:flush()
+        utils.__log('creating indexes', '')
+        database.__create_indexes()
+        local elapsed = os.difftime(os.time(), start)
+        utils.__log('finished processing files ' .. elapsed .. 's elapsed')
+        vim.g.treetags_processing = false
+    end
+
+    if #files == 0 then
+        finish()
+        return
+    end
 
     utils.__scheduled_iteration(files, function(_, item, items)
         parse.__parse_file(item, kinds_filter, writer)
@@ -60,12 +84,7 @@ M.__init_database = function(params)
         end
 
         if counter == #items then
-            writer:flush()
-            utils.__log('creating indexes', '')
-            database.__create_indexes()
-            local elapsed = os.difftime(os.time(), start)
-            utils.__log('finished processing files ' .. elapsed .. 's elapsed')
-            vim.g.treetags_processing = false
+            finish()
         end
     end)
 end
@@ -74,7 +93,7 @@ end
 ---@return Treetag[]
 M.__get_all_treetags = function()
     local db = database.__get_db()
-    return safe_db_call(function()
+    return database_utils.__safe_db_call(function()
         return db:eval(query.get_all_tags())
     end)
 end
@@ -84,7 +103,7 @@ end
 ---@return Treetag[]
 M.__get_treetag_by_name = function(name)
     local db = database.__get_db()
-    return safe_db_call(function()
+    return database_utils.__safe_db_call(function()
         return db:eval(query.get_tags_by_name(name))
     end)
 end
@@ -95,7 +114,7 @@ end
 ---@return Treetag[]
 M.__get_treetag_by_name_glob = function(name)
     local db = database.__get_db()
-    return safe_db_call(function()
+    return database_utils.__safe_db_call(function()
         return db:eval(query.get_tags_by_name_glob(name))
     end)
 end

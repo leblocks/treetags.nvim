@@ -1,7 +1,25 @@
-local database = require('treetags.database')
 local utils = require('treetags.main.utils')
+local database = require('treetags.database')
+local history = require('treetags.parse.history')
+local parse_utils = require('treetags.parse.utils')
 
 local M = {}
+
+---Return changed source paths since the latest indexed commit, or all source paths if no history exists.
+---@param diff_filter? string Git diff status letters to include.
+---@param extensions? string[] Allowed file extensions without leading dots.
+---@return string[]
+M.__get_changed_source_files = function(diff_filter, extensions)
+    local last_commit = history.__get_last_parsed_commit()
+
+    -- no history, get all files
+    if last_commit == '' then
+        return M.__get_source_files(extensions)
+    end
+
+    -- get only changed ones
+    return parse_utils.__get_changed_files(last_commit, '.', diff_filter, extensions)
+end
 
 M.__get_source_files = function(extensions)
     local command = { 'fd', '--type', 'file' }
@@ -56,13 +74,13 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     local parser_name = M.__get_parser_name(file_path)
 
     if not parser_name then
-        utils.__log('error finding parser name for ' .. file_path)
+        utils.__log('error finding parser name for file: ' .. file_path)
         file:close()
         return
     end
 
     if not vim.treesitter.language.add(parser_name) then
-        utils.__log('error loading parser for ' .. parser_name .. ' file ' .. file_path)
+        utils.__log('error loading parser for parser_name: ' .. parser_name .. ' file: ' .. file_path)
         file:close()
         return
     end
@@ -70,7 +88,7 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     local parser = vim.treesitter.get_string_parser(file_content, parser_name, { error = false })
 
     if not parser then
-        utils.__log('error finding parser for ' .. file_path .. ' name ' .. parser_name)
+        utils.__log('error finding parser for file: ' .. file_path .. ' parser_name: ' .. parser_name)
         file:close()
         return
     end
@@ -78,7 +96,7 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     local query = vim.treesitter.query.get(parser_name, 'locals')
 
     if not query then
-        utils.__log('error finding query for ' .. file_path .. ' name ' .. parser_name)
+        utils.__log('error finding query for file: ' .. file_path .. ' parser_name: ' .. parser_name)
         file:close()
         return
     end
