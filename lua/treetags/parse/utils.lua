@@ -27,11 +27,12 @@ M.__get_commit_hash = function()
     return nil
 end
 
---- AGENT TODO complete documentation
----@param start_commit string
----@param end_commit string
----@param diff_filter string
----@param extensions string[]
+---Return Git-diff paths between two revisions, optionally filtered by status and extension.
+---@param start_commit string Start revision accepted by `git diff`.
+---@param end_commit string End revision accepted by `git diff`.
+---@param diff_filter? string Git diff status letters to include, such as `D` for deleted files.
+---@param extensions? string[] Allowed file extensions without leading dots; nil or empty allows all.
+---@return string[] Changed paths relative to the current working directory.
 M.__get_changed_files = function(start_commit, end_commit, diff_filter, extensions)
     local arguments = {
         'git',

@@ -3,7 +3,7 @@
 ---@field extensions? string[] File extensions to parse; empty parses every file returned by fd.
 ---@field kinds_filter? string[] Definition kinds to exclude; empty stores every kind.
 ---@field buffer_size? number Entries to buffer before flushing to the database; defaults to 1000.
----@field incremental? bool AGENT TODO provide documentation
+---@field incremental? boolean Incrementally reparse changed Git-tracked files.
 
 ---An indexed Tree-sitter definition.
 ---@class Treetag
@@ -30,7 +30,6 @@ vim.g.treetags_processing = false
 ---@param params? TreetagsDatabaseInitParams
 M.__init_database = function(params)
     vim.g.treetags_processing = true
-    database.__drop_db()
     params = params or {}
     local extensions = params.extensions or {}
     local kinds_filter = params.kinds_filter or {}
@@ -62,6 +61,20 @@ M.__init_database = function(params)
     local current_commit = parse_utils.__get_commit_hash()
     history.__add_parse_history_entry(current_commit)
 
+    local finish = function()
+        writer:flush()
+        utils.__log('creating indexes', '')
+        database.__create_indexes()
+        local elapsed = os.difftime(os.time(), start)
+        utils.__log('finished processing files ' .. elapsed .. 's elapsed')
+        vim.g.treetags_processing = false
+    end
+
+    if #files == 0 then
+        finish()
+        return
+    end
+
     utils.__scheduled_iteration(files, function(_, item, items)
         parse.__parse_file(item, kinds_filter, writer)
         counter = counter + 1
@@ -71,12 +84,7 @@ M.__init_database = function(params)
         end
 
         if counter == #items then
-            writer:flush()
-            utils.__log('creating indexes', '')
-            database.__create_indexes()
-            local elapsed = os.difftime(os.time(), start)
-            utils.__log('finished processing files ' .. elapsed .. 's elapsed')
-            vim.g.treetags_processing = false
+            finish()
         end
     end)
 end

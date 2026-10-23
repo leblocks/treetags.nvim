@@ -5,8 +5,10 @@ local parse_utils = require('treetags.parse.utils')
 
 local M = {}
 
----@param diff_filter string AGENT TODO docs
----@param extensions string[] AGENT TODO docs
+---Return changed source paths since the latest indexed commit, or all source paths if no history exists.
+---@param diff_filter? string Git diff status letters to include.
+---@param extensions? string[] Allowed file extensions without leading dots.
+---@return string[]
 M.__get_changed_source_files = function(diff_filter, extensions)
     local last_commit = history.__get_last_parsed_commit()
 
