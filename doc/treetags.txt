@@ -54,6 +54,7 @@ The optional parameters are:
         extensions = { 'lua', 'js', 'cs' },
         kinds_filter = { 'var' },
         buffer_size = 1000,
+        incremental = false,
     })
 <
 
@@ -68,6 +69,14 @@ kinds_filter ~
 buffer_size ~
     The number of definitions buffered before a batch insert. Defaults to 1000.
 
+incremental ~
+    When true, reparse changed Git-tracked files since the previous index
+    instead of scanning every file. Changed files are removed and reparsed;
+    deleted files are removed from the index. The first run, or a run without
+    saved Git history, indexes all files. Untracked files are not detected by
+    Git diff. Keep extensions and kinds_filter unchanged between incremental
+    runs; use a full rebuild after changing either option. Defaults to false.
+
 Files without a recognized filetype, installed parser, or "locals" query are
 reported and skipped. Stored paths are normalized relative paths. Tree-sitter's
 zero-based row and column values are converted to one-based values.
@@ -77,8 +86,9 @@ API                                                               *treetags-api*
 
                                                         *treetags.init_database()*
 init_database({params})
-    Clear and asynchronously rebuild the current project's index. {params} is
-    the optional table described in |treetags-indexing|.
+    Asynchronously build the current project's index. By default, clear and
+    rebuild it; with incremental=true, update changed Git-tracked files.
+    {params} is the optional table described in |treetags-indexing|.
 
                                                       *treetags.get_all_treetags()*
 get_all_treetags()

@@ -4,7 +4,8 @@ local utils = require('treetags.main.utils')
 
 local M = {}
 
----Clear and asynchronously rebuild the definition index for the current working directory.
+---Asynchronously build the definition index for the current working directory.
+---By default this clears and rebuilds the index; `incremental = true` updates changed Git-tracked files.
 ---@param params? TreetagsDatabaseInitParams
 M.init_database = function(params)
     utils.__block_on_processing(function()

@@ -13,10 +13,13 @@ describe('treetags.main', function()
         local extensions = db:eval([[
             SELECT DISTINCT substr(path, instr(path, '.') + 1) AS extension
             FROM files
-            ORDER BY path
+            WHERE extension IN ('js', 'lua', 'cs')
+            ORDER BY extension
         ]])
-        -- TODO make better assertion
-        assert(#extensions > 3)
+        assert(#extensions == 3)
+        assert(extensions[1].extension == 'cs')
+        assert(extensions[2].extension == 'js')
+        assert(extensions[3].extension == 'lua')
     end)
 
     it('__init_database - extensions filters work', function()

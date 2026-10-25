@@ -164,6 +164,7 @@ require('treetags').init_database({
     extensions = {},
     kinds_filter = {},
     buffer_size = 1000,
+    incremental = false,
 })
 ```
 
@@ -172,6 +173,18 @@ require('treetags').init_database({
 | `extensions` | Allow-list of file extensions, without leading dots. Empty means consider every file returned by fd. |
 | `kinds_filter` | Deny-list of definition kinds. Empty means store every captured kind. |
 | `buffer_size` | Number of definitions accumulated before a batch insert. |
+| `incremental` | When true, reparse changed Git-tracked files since the previous index instead of scanning all files. Defaults to `false`. |
+
+Incremental indexing uses the most recently recorded Git commit as its baseline.
+On the first incremental run, or when no Git history is available, it indexes
+all files. Later runs remove and reparse changed files, and remove deleted
+files from the index. Untracked files are not included by Git diff. Keep the
+same `extensions` and `kinds_filter` between incremental runs; use a full
+rebuild after changing those options.
+
+```lua
+require('treetags').init_database({ incremental = true })
+```
 
 For example, index only Lua, JavaScript, and C# files, excluding `var` captures:
 
@@ -314,10 +327,10 @@ Start with `:checkhealth treetags` and `:messages`.
 | fd cannot be found | Ensure the executable is named `fd` and is on Neovim's `PATH`. Some distributions install it as `fdfind`. |
 | SQLite fails to load | Install the native SQLite library and follow sqlite.lua's platform instructions. On Windows, set `vim.g.sqlite_clib_path` to the SQLite DLL before loading treetags. |
 | Files or languages are missing | Check `:pwd`, fd ignore rules, `extensions`, and `kinds_filter`. Install the language parser and confirm a `locals` query exists; syntax highlighting alone does not establish this. |
-| Results are stale | Save source changes and rebuild with `init_database()`. There is no incremental indexing. |
+| Results are stale | Run `init_database({ incremental = true })` to update Git-tracked changes, or `init_database()` for a full rebuild. |
 | Navigation opens the wrong path | Keep the working directory at the indexed project root. Restart Neovim when switching projects; the database connection is cached. |
 | Live search has no results | Enter a nonempty prompt, check identifier casing, and remember that GLOB metacharacters are active. |
-| Operations keep reporting that indexing is running | Inspect `:messages` for failures and confirm fd finds files. An empty file list can leave the processing flag set. Resolve the cause and restart Neovim before retrying. |
+| Operations keep reporting that indexing is running | Inspect `:messages` for errors; if indexing stopped without a completion notification, restart Neovim before retrying. |
 
 The health check does not verify per-language parser or `locals` query coverage.
 
@@ -327,8 +340,7 @@ The health check does not verify per-language parser or `locals` query coverage.
 [hopcsharp.nvim](https://github.com/leblocks/hopcsharp.nvim), generalized from
 C# navigation to languages with suitable Tree-sitter parsers and queries.
 
-Planned, not currently implemented: incremental indexing and additional picker
-integrations.
+Planned: additional picker integrations.
 
 ## License
 
