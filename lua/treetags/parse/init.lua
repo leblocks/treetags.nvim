@@ -64,7 +64,7 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     local normalized_path = vim.fs.normalize(file_path)
 
     if not file then
-        utils.__log('error opening ' .. file_path .. ' error: ' .. err)
+        utils.__log('error opening ' .. file_path .. ' error: ' .. err, nil, vim.log.levels.DEBUG)
         return
     end
 
@@ -74,13 +74,13 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     local parser_name = M.__get_parser_name(file_path)
 
     if not parser_name then
-        utils.__log('error finding parser name for file: ' .. file_path)
+        utils.__log('error finding parser name for file: ' .. file_path, nil, vim.log.levels.DEBUG)
         file:close()
         return
     end
 
     if not vim.treesitter.language.add(parser_name) then
-        utils.__log('error loading parser for parser_name: ' .. parser_name .. ' file: ' .. file_path)
+        utils.__log('error loading parser for parser_name: ' .. parser_name .. ' file: ' .. file_path, nil, vim.log.levels.DEBUG)
         file:close()
         return
     end
@@ -88,7 +88,7 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     local parser = vim.treesitter.get_string_parser(file_content, parser_name, { error = false })
 
     if not parser then
-        utils.__log('error finding parser for file: ' .. file_path .. ' parser_name: ' .. parser_name)
+        utils.__log('error finding parser for file: ' .. file_path .. ' parser_name: ' .. parser_name, nil, vim.log.levels.DEBUG)
         file:close()
         return
     end
@@ -96,7 +96,7 @@ M.__parse_tree = function(file_path, callback, buffered_writer)
     local query = vim.treesitter.query.get(parser_name, 'locals')
 
     if not query then
-        utils.__log('error finding query for file: ' .. file_path .. ' parser_name: ' .. parser_name)
+        utils.__log('error finding query for file: ' .. file_path .. ' parser_name: ' .. parser_name, nil, vim.log.levels.DEBUG)
         file:close()
         return
     end

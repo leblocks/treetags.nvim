@@ -168,5 +168,4 @@ describe('utils', function()
 
         assert(calls == 1)
     end)
-
 end)

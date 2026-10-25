@@ -45,7 +45,7 @@ M.__init_database = function(params)
 
     if incremental then
         for _, file in ipairs(parse.__get_changed_source_files(nil, extensions)) do
-            utils.__log('dropping ' .. file)
+            utils.__log('dropping ' .. file, '', vim.log.levels.DEBUG)
             database.__drop_by_path(file)
         end
 
@@ -64,7 +64,7 @@ M.__init_database = function(params)
 
     local finish = function()
         writer:flush()
-        utils.__log('creating indexes', '')
+        utils.__log('creating indexes')
         database.__create_indexes()
         local elapsed = os.difftime(os.time(), start)
         utils.__log('finished processing files ' .. elapsed .. 's elapsed')
