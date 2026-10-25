@@ -25,6 +25,7 @@ local utils = require('treetags.main.utils')
 local M = {}
 
 vim.g.treetags_processing = false
+vim.g.treetags_debug_level = vim.log.levels.INFO
 
 ---Clear and asynchronously rebuild the definition index for the current working directory.
 ---@param params? TreetagsDatabaseInitParams
