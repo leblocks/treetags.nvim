@@ -6,6 +6,7 @@ local some_commit_hash = '49139a0'
 
 describe('treetags.parse', function()
     it('__get_changed_source_files - no history ', function()
+        database.__drop_db()
         local files = parse.__get_changed_source_files('', {})
         local all_files = parse.__get_source_files({})
 
