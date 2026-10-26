@@ -12,9 +12,13 @@ M.__block_on_processing = function(callback)
     return callback()
 end
 
-M.__log = function(message, prefix)
+M.__log = function(message, prefix, level)
+    level = level or vim.log.levels.INFO
     prefix = prefix or 'treetags: '
-    vim.notify(M.__escape_ansi(prefix .. message), vim.log.levels.INFO)
+
+    if level >= vim.g.treetags_debug_level then
+        vim.notify(M.__escape_ansi(prefix .. message), level)
+    end
 end
 
 ---@param entries table to iterate on

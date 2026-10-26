@@ -96,4 +96,84 @@ describe('utils', function()
     it('__escape_ansi - does not escapes regular string', function()
         assert('test' == utils.__escape_ansi('test'))
     end)
+
+    it('__log - level OFF', function()
+        vim.g.treetags_debug_level = vim.log.levels.OFF
+        local calls = 0
+        vim.notify = function(_, level)
+            calls = calls + 1
+        end
+
+        utils.__log('test', '', vim.log.levels.TRACE)
+        utils.__log('test', '', vim.log.levels.DEBUG)
+        utils.__log('test', '', vim.log.levels.INFO)
+        utils.__log('test', '', vim.log.levels.WARN)
+        utils.__log('test', '', vim.log.levels.ERROR)
+
+        assert(calls == 0)
+    end)
+
+    it('__log - level TRACE', function()
+        vim.g.treetags_debug_level = vim.log.levels.TRACE
+        local calls = 0
+        vim.notify = function(_, _)
+            calls = calls + 1
+        end
+
+        utils.__log('test', '', vim.log.levels.TRACE)
+        utils.__log('test', '', vim.log.levels.DEBUG)
+        utils.__log('test', '', vim.log.levels.INFO)
+        utils.__log('test', '', vim.log.levels.WARN)
+        utils.__log('test', '', vim.log.levels.ERROR)
+
+        assert(calls == 5)
+    end)
+
+    it('__log - level DEBUG', function()
+        vim.g.treetags_debug_level = vim.log.levels.DEBUG
+        local calls = 0
+        vim.notify = function(_, _)
+            calls = calls + 1
+        end
+
+        utils.__log('test', '', vim.log.levels.TRACE)
+        utils.__log('test', '', vim.log.levels.DEBUG)
+        utils.__log('test', '', vim.log.levels.INFO)
+        utils.__log('test', '', vim.log.levels.WARN)
+        utils.__log('test', '', vim.log.levels.ERROR)
+
+        assert(calls == 4)
+    end)
+
+    it('__log - level INFO', function()
+        vim.g.treetags_debug_level = vim.log.levels.INFO
+        local calls = 0
+        vim.notify = function(_, _)
+            calls = calls + 1
+        end
+
+        utils.__log('test', '', vim.log.levels.TRACE)
+        utils.__log('test', '', vim.log.levels.DEBUG)
+        utils.__log('test', '', vim.log.levels.INFO)
+        utils.__log('test', '', vim.log.levels.WARN)
+        utils.__log('test', '', vim.log.levels.ERROR)
+
+        assert(calls == 3)
+    end)
+
+    it('__log - level ERROR', function()
+        vim.g.treetags_debug_level = vim.log.levels.ERROR
+        local calls = 0
+        vim.notify = function(_, _)
+            calls = calls + 1
+        end
+
+        utils.__log('test', '', vim.log.levels.TRACE)
+        utils.__log('test', '', vim.log.levels.DEBUG)
+        utils.__log('test', '', vim.log.levels.INFO)
+        utils.__log('test', '', vim.log.levels.WARN)
+        utils.__log('test', '', vim.log.levels.ERROR)
+
+        assert(calls == 1)
+    end)
 end)
