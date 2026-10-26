@@ -116,7 +116,9 @@ describe('utils', function()
     it('__log - level TRACE', function()
         vim.g.treetags_debug_level = vim.log.levels.TRACE
         local calls = 0
-        vim.notify = function(_, _) calls = calls + 1 end
+        vim.notify = function(_, _)
+            calls = calls + 1
+        end
 
         utils.__log('test', '', vim.log.levels.TRACE)
         utils.__log('test', '', vim.log.levels.DEBUG)
@@ -130,7 +132,9 @@ describe('utils', function()
     it('__log - level DEBUG', function()
         vim.g.treetags_debug_level = vim.log.levels.DEBUG
         local calls = 0
-        vim.notify = function(_, _) calls = calls + 1 end
+        vim.notify = function(_, _)
+            calls = calls + 1
+        end
 
         utils.__log('test', '', vim.log.levels.TRACE)
         utils.__log('test', '', vim.log.levels.DEBUG)
@@ -144,7 +148,9 @@ describe('utils', function()
     it('__log - level INFO', function()
         vim.g.treetags_debug_level = vim.log.levels.INFO
         local calls = 0
-        vim.notify = function(_, _) calls = calls + 1 end
+        vim.notify = function(_, _)
+            calls = calls + 1
+        end
 
         utils.__log('test', '', vim.log.levels.TRACE)
         utils.__log('test', '', vim.log.levels.DEBUG)
@@ -158,7 +164,9 @@ describe('utils', function()
     it('__log - level ERROR', function()
         vim.g.treetags_debug_level = vim.log.levels.ERROR
         local calls = 0
-        vim.notify = function(_, _) calls = calls + 1 end
+        vim.notify = function(_, _)
+            calls = calls + 1
+        end
 
         utils.__log('test', '', vim.log.levels.TRACE)
         utils.__log('test', '', vim.log.levels.DEBUG)
