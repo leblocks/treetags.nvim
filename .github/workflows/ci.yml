@@ -1,4 +1,3 @@
-# TODO install just
 name: Tests
 
 on: [push]
