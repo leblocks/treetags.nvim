@@ -1,3 +1,4 @@
+--- TODO tests
 ---Builder for fzf-lua pickers backed by treetags query functions.
 ---@class FzfLuaPickerBuilder
 ---@field items Treetag[]
@@ -7,6 +8,8 @@
 ---@field prompt string
 ---@field exec_empty_query boolean
 ---@field fzf_opts table
+---@field actions table
+---@field query string
 
 local FzfLuaPickerBuilder = {}
 
@@ -24,6 +27,8 @@ function FzfLuaPickerBuilder:new()
             ['--wrap'] = false,
             ['--multi'] = true,
         },
+        actions = nil,
+        query = nil,
     }
 
     self.__index = self
@@ -61,6 +66,22 @@ end
 ---@return FzfLuaPickerBuilder
 function FzfLuaPickerBuilder:with_prompt(prompt)
     self.prompt = prompt
+    return self
+end
+
+---Set the fzf actions.
+---@param actions table
+---@return FzfLuaPickerBuilder
+function FzfLuaPickerBuilder:with_actions(actions)
+    self.actions = actions
+    return self
+end
+
+---Set the fzf query.
+---@param query string
+---@return FzfLuaPickerBuilder
+function FzfLuaPickerBuilder:with_query(query)
+    self.query = query
     return self
 end
 
@@ -163,7 +184,7 @@ function FzfLuaPickerBuilder:build()
                 fzf_cb()
             end)()
         end, {
-            actions = self:get_actions(),
+            actions = self.actions or self:get_actions(),
             previewer = self:get_previewer(),
             fzf_opts = self.fzf_opts,
             prompt = self.prompt,
@@ -197,12 +218,71 @@ function FzfLuaPickerBuilder:build_live()
                 fzf_cb()
             end)
         end, {
-            actions = self:get_actions(),
+            actions = self.actions,
             previewer = self:get_previewer(),
             fzf_opts = self.fzf_opts,
             prompt = self.prompt,
+            query = self.query,
             exec_empty_query = self.exec_empty_query,
         })
+    end
+end
+
+-- TODO refactor \ cleanup
+--- AGENT TODO documentation
+function FzfLuaPickerBuilder:build_toggleable_live()
+    return function()
+        local live_search
+
+        local fuzzy_actions = self:get_actions()
+
+        local fuzzy_search = function(frozen_query)
+            frozen_query = frozen_query or ''
+            fuzzy_actions['ctrl-g'] = function(_, opts)
+                live_search(frozen_query)
+            end
+            local picker = FzfLuaPickerBuilder:new()
+                :with_items_provider(function()
+                    -- since this one is nested builder we
+                    -- have to update outer items as well for
+                    -- actions to continue work
+                    self.items = self.items_provider(frozen_query)
+                    return self.items
+                end)
+                :with_entry_parser(self.parser)
+                :with_formatter(self.formatter)
+                :with_actions(fuzzy_actions)
+                :with_prompt(self.prompt .. ' (' .. frozen_query .. ') ')
+                :build()
+
+            picker()
+        end
+
+        local live_actions = self:get_actions()
+
+        live_search = function(initial_query)
+            live_actions['ctrl-g'] = function(_, opts)
+                fuzzy_search(opts.last_query)
+            end
+            local picker = FzfLuaPickerBuilder:new()
+                :with_items_provider(function(arg)
+                    -- since this one is nested builder we
+                    -- have to update outer items as well for
+                    -- actions to continue work
+                    self.items = self.items_provider(arg)
+                    return self.items
+                end)
+                :with_entry_parser(self.parser)
+                :with_formatter(self.formatter)
+                :with_actions(live_actions)
+                :with_prompt(self.prompt)
+                :with_query(initial_query)
+                :build_live()
+
+            picker()
+        end
+
+        live_search('')
     end
 end
 
