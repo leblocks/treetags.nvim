@@ -69,5 +69,5 @@ return {
         :with_entry_parser(parse_entry)
         :with_formatter(format_entry)
         :with_prompt('Treetags live > ')
-        :build_live(),
+        :build_toggleable_live(),
 }
