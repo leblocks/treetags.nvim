@@ -1,4 +1,3 @@
---- TODO tests
 ---Builder for fzf-lua pickers backed by treetags query functions.
 ---@class FzfLuaPickerBuilder
 ---@field items Treetag[]
@@ -228,8 +227,7 @@ function FzfLuaPickerBuilder:build_live()
     end
 end
 
--- TODO refactor \ cleanup
---- AGENT TODO documentation
+---Open a live database search that can be toggled to fuzzy filtering with Ctrl-G.
 function FzfLuaPickerBuilder:build_toggleable_live()
     return function()
         local live_search

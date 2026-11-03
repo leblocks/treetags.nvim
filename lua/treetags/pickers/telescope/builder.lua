@@ -1,4 +1,3 @@
---- TODO tests
 ---Builder for telescope pickers backed by treetags query functions.
 ---@class TelescopePickerBuilder
 ---@field items_provider function

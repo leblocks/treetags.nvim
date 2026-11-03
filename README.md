@@ -239,6 +239,7 @@ The integration provides file previews, multi-selection, and these actions:
 | `Ctrl-S` | Open in a horizontal split. |
 | `Ctrl-T` | Open in a new tab. |
 | `Alt-Q` | Send selected definitions to the quickfix list. |
+| `Ctrl-G` | Toggle between live database search and fuzzy filtering of the current query. |
 
 ### Telescope
 
