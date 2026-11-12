@@ -136,6 +136,8 @@ vim.keymap.set('n', '<leader>ta', pickers.treetags_all, { desc = 'Treetags: all 
 vim.keymap.set('n', '<leader>tw', pickers.treetags_cword, { desc = 'Treetags: word under cursor' })
 vim.keymap.set('n', '<leader>tW', pickers.treetags_cWORD, { desc = 'Treetags: WORD under cursor' })
 vim.keymap.set('n', '<leader>tl', pickers.treetags_live, { desc = 'Treetags: live search' })
+vim.keymap.set('n', '<leader>tfa', pickers.treetags_files_all, { desc = 'Treetags: all files' })
+vim.keymap.set('n', '<leader>tfl', pickers.treetags_files_live, { desc = 'Treetags: live files' })
 ```
 
 Run `init_database()` again when you want to refresh results after source
@@ -222,6 +224,8 @@ Only the requested integration is loaded.
 | `treetags_cword()` | Exact name matches for `<cword>` under the cursor. |
 | `treetags_cWORD()` | Exact name matches for `<cWORD>` under the cursor. |
 | `treetags_live()` | Database lookup as the prompt changes; an empty prompt shows no results. |
+| `treetags_files_all()` | Every indexed file, filtered interactively by the picker. |
+| `treetags_files_live()` | Database lookup for files as the prompt changes; an empty prompt shows no results. |
 
 Live lookup uses **case-sensitive SQLite GLOB** matching with `*` around the
 prompt. GLOB metacharacters such as `*`, `?`, and bracket expressions retain
@@ -268,10 +272,12 @@ All public functions are available through `require('treetags')`:
 | `get_all_treetags()` | Return all indexed definitions. |
 | `get_treetag_by_name(name)` | Return exact name matches. |
 | `get_treetag_by_name_glob(name)` | Return case-sensitive GLOB matches using `*name*`. |
+| `get_all_parsed_files()` | Return all indexed files. |
+| `get_parsed_files_by_name_glob(name)` | Return case-sensitive GLOB path matches using `*name*`. |
 | `get_pickers(type)` | Return the `'fzf'` or `'telescope'` integration. |
 | `get_db()` | Return the underlying sqlite.lua database object. |
 
-After indexing finishes, lookup functions return arrays of records shaped like:
+After indexing finishes, definition lookup functions return arrays of records shaped like:
 
 ```lua
 {
@@ -280,6 +286,15 @@ After indexing finishes, lookup functions return arrays of records shaped like:
     path = 'lua/example.lua',
     row = 10,
     column = 7,
+}
+```
+
+File lookup functions (`get_all_parsed_files` and `get_parsed_files_by_name_glob`) return arrays of records shaped like:
+
+```lua
+{
+    id = 1,
+    path = 'lua/example.lua',
 }
 ```
 

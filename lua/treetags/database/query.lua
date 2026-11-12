@@ -54,4 +54,23 @@ M.get_tags_by_name_glob = function(name)
     return string.format(query, name)
 end
 
+M.get_all_parsed_files = function()
+    return [[
+        SELECT f.id, f.path
+        FROM files f
+        ORDER BY f.path ASC
+    ]]
+end
+
+M.get_parsed_files_by_name_glob = function(name)
+    local query = [[
+        SELECT f.id, f.path
+        FROM files f
+        WHERE f.path GLOB '*%s*'
+        ORDER BY f.path ASC
+    ]]
+
+    return string.format(query, name)
+end
+
 return M

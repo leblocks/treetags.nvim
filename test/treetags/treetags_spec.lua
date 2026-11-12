@@ -157,4 +157,29 @@ describe('treetags', function()
         local db2 = require('treetags').get_db()
         assert(db1 == db2)
     end)
+
+    it('get_all_parsed_files - happy path', function()
+        database.__drop_db()
+        require('treetags').init_database()
+        vim.wait(5000, function()
+            return not vim.g.treetags_processing
+        end)
+
+        local files = require('treetags').get_all_parsed_files()
+        assert(#files > 0)
+        assert(files[1].path == 'LICENSE')
+        assert(files[2].path == 'README.md')
+    end)
+
+    it('get_all_parsed_files_by_name_glob - happy path', function()
+        database.__drop_db()
+        require('treetags').init_database()
+        vim.wait(5000, function()
+            return not vim.g.treetags_processing
+        end)
+
+        local files = require('treetags').get_parsed_files_by_name_glob('RE')
+        assert(#files == 1)
+        assert(files[1].path == 'README.md')
+    end)
 end)

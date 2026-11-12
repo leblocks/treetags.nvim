@@ -29,6 +29,14 @@ local function parse_entry(entry, items)
     return item.path, item.row, item.column, item.kind, item.name
 end
 
+local function format_file_entry(_, entry)
+    return utils.__format_path_entry(entry)
+end
+
+local function parse_file_entry(entry)
+    return entry, 1, 1, '', entry
+end
+
 return {
     treetags_all = FzfLuaPickerBuilder:new()
         :with_items_provider(require('treetags').get_all_treetags)
@@ -69,5 +77,19 @@ return {
         :with_entry_parser(parse_entry)
         :with_formatter(format_entry)
         :with_prompt('Treetags live > ')
+        :build_toggleable_live(),
+
+    treetags_files_all = FzfLuaPickerBuilder:new()
+        :with_items_provider(require('treetags').get_all_parsed_files)
+        :with_entry_parser(parse_file_entry)
+        :with_formatter(format_file_entry)
+        :with_prompt('Treefiles > ')
+        :build(),
+
+    treetags_files_live = FzfLuaPickerBuilder:new()
+        :with_items_provider(require('treetags').get_parsed_files_by_name_glob)
+        :with_entry_parser(parse_file_entry)
+        :with_formatter(format_file_entry)
+        :with_prompt('Treefiles live > ')
         :build_toggleable_live(),
 }

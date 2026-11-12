@@ -47,12 +47,31 @@ M.get_db = function()
     end)
 end
 
+---Return all indexed files.
+---@return TreetagFile[]
+M.get_all_parsed_files = function()
+    return utils.__block_on_processing(function()
+        return main.__get_all_parsed_files()
+    end)
+end
+
+---Return indexed files whose path contains `name` using SQLite GLOB matching.
+---@param name? string
+---@return TreetagFile[]
+M.get_parsed_files_by_name_glob = function(name)
+    return utils.__block_on_processing(function()
+        return main.__get_parsed_files_by_name_glob(name)
+    end)
+end
+
 ---Picker functions backed by the treetags index.
 ---@class TreetagPickers
 ---@field treetags_all fun(): nil Open a picker containing every indexed definition.
 ---@field treetags_cword fun(): nil Open exact matches for the word under the cursor.
 ---@field treetags_cWORD fun(): nil Open exact matches for the WORD under the cursor.
 ---@field treetags_live fun(): nil Open a live substring-search picker.
+---@field treetags_files_all fun(): nil Open a picker containing every indexed file.
+---@field treetags_files_live fun(): nil Open a live substring-search picker for indexed files.
 
 ---Return the requested optional picker integration.
 ---@param picker_type '"fzf"'|'"telescope"'
