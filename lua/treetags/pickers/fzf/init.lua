@@ -30,7 +30,7 @@ local function parse_entry(entry, items)
 end
 
 local function format_file_entry(_, entry)
-    return entry.path
+    return utils.__format_path_entry(entry)
 end
 
 local function parse_file_entry(entry)
