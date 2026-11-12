@@ -121,13 +121,19 @@ M.__get_treetag_by_name_glob = function(name)
 end
 
 --- AGENT TODO provide documentation
-M.__get_all_parsed_files = function(name)
-    -- TODO
+M.__get_all_parsed_files = function()
+    local db = database.__get_db()
+    return database_utils.__safe_db_call(function()
+        return db:eval(query.get_all_parsed_files())
+    end)
 end
 
 --- AGENT TODO provide documentation
 M.__get_parsed_files_by_name_glob = function(name)
-    -- TODO
+    local db = database.__get_db()
+    return database_utils.__safe_db_call(function()
+        return db:eval(query.get_parsed_files_by_name_glob(name))
+    end)
 end
 
 return M

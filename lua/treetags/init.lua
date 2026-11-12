@@ -56,7 +56,7 @@ M.get_all_parsed_files = function()
     end)
 end
 
---- AGENT TODO provide documentation
+--- AGENT TODO provide documentation, create type TreetagFile to describe return type
 ---Return indexed files whose name contains `name` using SQLite GLOB matching.
 ---@param name? string
 ---@return string[]
