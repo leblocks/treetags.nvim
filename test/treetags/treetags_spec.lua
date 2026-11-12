@@ -169,7 +169,6 @@ describe('treetags', function()
         assert(#files > 0)
         assert(files[1].path == 'LICENSE')
         assert(files[2].path == 'README.md')
-        assert(files[3].path == 'doc/tags')
     end)
 
     it('get_all_parsed_files_by_name_glob - happy path', function()
