@@ -72,6 +72,8 @@ end
 ---@field treetags_cword fun(): nil Open exact matches for the word under the cursor.
 ---@field treetags_cWORD fun(): nil Open exact matches for the WORD under the cursor.
 ---@field treetags_live fun(): nil Open a live substring-search picker.
+---@field treetags_files_all fun(): nil AGENT TODO documentation
+---@field treetags_files_live fun(): nil AGENT TODO documentation
 
 ---Return the requested optional picker integration.
 ---@param picker_type '"fzf"'|'"telescope"'
