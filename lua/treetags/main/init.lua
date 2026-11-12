@@ -120,4 +120,14 @@ M.__get_treetag_by_name_glob = function(name)
     end)
 end
 
+--- AGENT TODO provide documentation
+M.__get_all_parsed_files = function(name)
+    -- TODO
+end
+
+--- AGENT TODO provide documentation
+M.__get_parsed_files_by_name_glob = function(name)
+    -- TODO
+end
+
 return M

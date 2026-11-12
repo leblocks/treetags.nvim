@@ -1,5 +1,7 @@
 # treetags.nvim
 
+AGENT TODO update README.md and vimdoc with new pickers and API methods
+
 **Find definitions across your project, even without a language server.**
 
 `treetags.nvim` builds a ctags-style definition index using Tree-sitter and

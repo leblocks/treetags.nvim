@@ -47,6 +47,25 @@ M.get_db = function()
     end)
 end
 
+--- AGENT TODO documentation
+---Return all indexed files.
+---@return string[]
+M.get_all_parsed_files = function()
+    return utils.__block_on_processing(function()
+        return main.__get_all_parsed_files()
+    end)
+end
+
+--- AGENT TODO provide documentation
+---Return indexed files whose name contains `name` using SQLite GLOB matching.
+---@param name? string
+---@return string[]
+M.get_parsed_files_by_name_glob = function(name)
+    return utils.__block_on_processing(function()
+        return main.__get_parsed_files_by_name_glob(name)
+    end)
+end
+
 ---Picker functions backed by the treetags index.
 ---@class TreetagPickers
 ---@field treetags_all fun(): nil Open a picker containing every indexed definition.
