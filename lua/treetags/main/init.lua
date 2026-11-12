@@ -13,6 +13,11 @@
 ---@field row number
 ---@field path string
 
+---An indexed file record.
+---@class TreetagFile
+---@field id number
+---@field path string
+
 local BufferedWriter = require('treetags.database.buffer')
 local database = require('treetags.database')
 local database_utils = require('treetags.database.utils')
@@ -120,7 +125,8 @@ M.__get_treetag_by_name_glob = function(name)
     end)
 end
 
---- AGENT TODO provide documentation
+---Return all indexed files.
+---@return TreetagFile[]
 M.__get_all_parsed_files = function()
     local db = database.__get_db()
     return database_utils.__safe_db_call(function()
@@ -128,7 +134,10 @@ M.__get_all_parsed_files = function()
     end)
 end
 
---- AGENT TODO provide documentation
+---Return indexed files whose path contains `name`.
+---Matching intentionally remains case-sensitive.
+---@param name? string Partial path of a file.
+---@return TreetagFile[]
 M.__get_parsed_files_by_name_glob = function(name)
     local db = database.__get_db()
     return database_utils.__safe_db_call(function()

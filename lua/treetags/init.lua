@@ -47,19 +47,17 @@ M.get_db = function()
     end)
 end
 
---- AGENT TODO documentation
 ---Return all indexed files.
----@return string[]
+---@return TreetagFile[]
 M.get_all_parsed_files = function()
     return utils.__block_on_processing(function()
         return main.__get_all_parsed_files()
     end)
 end
 
---- AGENT TODO provide documentation, create type TreetagFile to describe return type
----Return indexed files whose name contains `name` using SQLite GLOB matching.
+---Return indexed files whose path contains `name` using SQLite GLOB matching.
 ---@param name? string
----@return string[]
+---@return TreetagFile[]
 M.get_parsed_files_by_name_glob = function(name)
     return utils.__block_on_processing(function()
         return main.__get_parsed_files_by_name_glob(name)
@@ -72,8 +70,8 @@ end
 ---@field treetags_cword fun(): nil Open exact matches for the word under the cursor.
 ---@field treetags_cWORD fun(): nil Open exact matches for the WORD under the cursor.
 ---@field treetags_live fun(): nil Open a live substring-search picker.
----@field treetags_files_all fun(): nil AGENT TODO documentation
----@field treetags_files_live fun(): nil AGENT TODO documentation
+---@field treetags_files_all fun(): nil Open a picker containing every indexed file.
+---@field treetags_files_live fun(): nil Open a live substring-search picker for indexed files.
 
 ---Return the requested optional picker integration.
 ---@param picker_type '"fzf"'|'"telescope"'

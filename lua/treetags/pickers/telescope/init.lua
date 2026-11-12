@@ -8,7 +8,9 @@ local utils = require('treetags.pickers.utils')
 
 local TelescopePickerBuilder = require('treetags.pickers.telescope.builder')
 
--- AGENT TODO documentation
+---Transform a list of indexed files into Telescope entry items.
+---@param files TreetagFile[]
+---@return table[]
 local function files_to_entries(files)
     local entries = {}
     for _, file in ipairs(files) do

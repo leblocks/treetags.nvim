@@ -104,6 +104,16 @@ get_treetag_by_name_glob({name})
     Return definitions whose names contain {name}, using SQLite GLOB matching.
     Matching is case-sensitive. Nil and empty names return an empty list.
 
+                                                   *treetags.get_all_parsed_files()*
+get_all_parsed_files()
+    Return every indexed file record in the current project's index.
+
+                                            *treetags.get_parsed_files_by_name_glob()*
+get_parsed_files_by_name_glob({name})
+    Return indexed file records whose path contains {name}, using SQLite GLOB
+    matching. Matching is case-sensitive. Nil and empty names return an empty
+    list.
+
                                                              *treetags.get_db()*
 get_db()
     Return the underlying sqlite.lua database object for custom queries. The
@@ -134,6 +144,14 @@ Lookup functions return a list of Treetag tables:
     }
 <
 
+File lookup functions return a list of file tables:
+>
+    {
+        id = 1,
+        path = 'lua/example.lua',
+    }
+<
+
 ==============================================================================
 FZF-LUA PICKER                                                    *treetags-fzf*
 
@@ -145,6 +163,8 @@ Get the fzf-lua integration and map its picker functions:
     vim.keymap.set('n', '<leader>tw', pickers.treetags_cword)
     vim.keymap.set('n', '<leader>tW', pickers.treetags_cWORD)
     vim.keymap.set('n', '<leader>tl', pickers.treetags_live)
+    vim.keymap.set('n', '<leader>tfa', pickers.treetags_files_all)
+    vim.keymap.set('n', '<leader>tfl', pickers.treetags_files_live)
 <
 
 treetags_all ~
@@ -158,6 +178,12 @@ treetags_cWORD ~
 
 treetags_live ~
     Query the index by substring as the prompt changes.
+
+treetags_files_all ~
+    Show every indexed file.
+
+treetags_files_live ~
+    Query indexed files by substring as the prompt changes.
 
 The default action opens a definition. CTRL-V opens a vertical split, CTRL-S a
 horizontal split, and CTRL-T a tab. ALT-Q sends selected definitions to the
@@ -174,6 +200,8 @@ Get the Telescope integration and map its picker functions:
     vim.keymap.set('n', '<leader>tw', pickers.treetags_cword)
     vim.keymap.set('n', '<leader>tW', pickers.treetags_cWORD)
     vim.keymap.set('n', '<leader>tl', pickers.treetags_live)
+    vim.keymap.set('n', '<leader>tfa', pickers.treetags_files_all)
+    vim.keymap.set('n', '<leader>tfl', pickers.treetags_files_live)
 <
 
 treetags_all ~
@@ -187,6 +215,13 @@ treetags_cWORD ~
 
 treetags_live ~
     Query the index as the prompt changes using case-sensitive SQLite GLOB
+    substring matching. An empty prompt shows no results.
+
+treetags_files_all ~
+    Show every indexed file.
+
+treetags_files_live ~
+    Query indexed files as the prompt changes using case-sensitive SQLite GLOB
     substring matching. An empty prompt shows no results.
 
 Each picker uses Telescope's configured file previewer and generic sorter,
